@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>公司人员配置原型</title>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root{--bg:#f3f4f6;--surface:#fff;--soft:#f7f8fa;--text:#262626;--muted:#7a7f87;--line:#e5e7eb;--line-strong:#d5d8dd;--primary:#1677ff;--primary-dark:#0958d9;--primary-soft:#e6f4ff;--cyan:#18a9dc;--red:#ff4d4f;--shadow:0 10px 32px rgba(31,35,41,.18)}
+    *{box-sizing:border-box}body{margin:0;min-width:320px;color:var(--text);background:var(--bg);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}button,input,select{font:inherit}button{cursor:pointer}.icon{width:16px;height:16px;flex:none}.app{min-height:100vh}.global-header{height:64px;position:sticky;top:0;z-index:30;display:grid;grid-template-columns:254px minmax(0,1fr) auto;background:#fff;border-bottom:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:10px;padding:0 26px;color:#fff;background:linear-gradient(110deg,#15b8d7,#2087e8);font-size:19px;font-weight:700;white-space:nowrap}.brand-mark{width:31px;height:31px;border:1px solid rgba(255,255,255,.65);border-radius:50%;display:grid;place-items:center}.global-nav{min-width:0;display:flex;align-items:stretch;padding-left:2px;overflow-x:auto}.global-nav button{position:relative;min-width:max-content;padding:0 20px;border:0;color:#30343b;background:transparent;font-size:15px}.global-nav button:hover{color:var(--primary)}.global-nav button.active{color:var(--primary);font-weight:600}.global-nav button.active::after{content:"";position:absolute;left:20px;right:20px;bottom:0;height:3px;background:var(--primary)}.header-user{display:flex;align-items:center;gap:18px;padding:0 22px}.notice-btn{position:relative;width:34px;height:34px;border:0;display:grid;place-items:center;background:transparent}.notice-dot{position:absolute;right:0;top:-1px;min-width:18px;height:18px;padding:0 4px;border:2px solid #fff;border-radius:10px;display:grid;place-items:center;color:#fff;background:var(--red);font-size:10px}.user{display:flex;align-items:center;gap:8px;white-space:nowrap}.avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:var(--primary);background:var(--primary-soft);font-weight:700}
+    .workspace{min-height:calc(100vh - 64px);display:grid;grid-template-columns:254px minmax(0,1fr)}.sidebar{position:sticky;top:64px;height:calc(100vh - 64px);display:flex;flex-direction:column;background:#f7f8fa;border-right:1px solid var(--line)}.side-search{padding:12px;border-bottom:1px solid var(--line)}.side-search .input-wrap input{height:38px;background:#fff}.side-nav{padding:10px 0;overflow-y:auto}.side-section{padding:10px 28px 7px;color:#9a9fa7;font-size:12px}.side-item{width:100%;min-height:43px;padding:9px 24px;border:0;display:flex;align-items:center;gap:10px;color:#343940;background:transparent;text-align:left}.side-item:hover{color:var(--primary);background:#eef5fd}.side-item.parent{color:var(--primary);font-weight:600}.side-item.child{padding-left:53px}.side-item.active{color:var(--primary);background:#e6f4ff;font-weight:600}.side-footer{margin-top:auto;height:42px;border-top:1px solid var(--line);display:grid;place-items:center;color:#626872}.main{min-width:0}.page-tabs{height:54px;display:flex;align-items:end;padding:0 12px;background:#fff;border-bottom:1px solid var(--line)}.page-tab{height:46px;padding:0 16px;border:1px solid transparent;border-bottom:0;display:flex;align-items:center;gap:9px;color:#4d535b;background:transparent}.page-tab.active{color:var(--primary);background:#fff;border-color:var(--line);font-weight:600}.tab-dot{width:7px;height:7px;border-radius:50%;background:#b9bec6}.page-tab.active .tab-dot{background:var(--primary)}.tab-close{width:17px;height:17px;border:0;display:grid;place-items:center;color:#8a9099;background:transparent}.breadcrumb{height:52px;padding:0 18px;display:flex;align-items:center;gap:10px;color:#8a9099;background:#fff;border-bottom:1px solid #eff0f2}.breadcrumb strong{color:#343940}.page{padding:16px 18px 40px}
+    .btn{min-height:38px;padding:7px 17px;border:1px solid var(--line-strong);border-radius:5px;display:inline-flex;align-items:center;justify-content:center;gap:7px;color:#30343b;background:#fff;font-weight:500;box-shadow:0 1px 2px rgba(31,35,41,.04)}.btn:hover{color:var(--primary);border-color:#91caff}.btn:disabled{cursor:not-allowed;color:#b6bac1;background:#f5f5f5;border-color:#e2e4e7;box-shadow:none}.btn-primary{color:#fff;background:var(--primary);border-color:var(--primary)}.btn-primary:hover{color:#fff;background:var(--primary-dark);border-color:var(--primary-dark)}.btn-danger:not(:disabled){color:var(--red);border-color:#ffccc7;background:#fff}.btn-danger:not(:disabled):hover{color:#fff;background:var(--red);border-color:var(--red)}.btn-link{min-height:30px;padding:3px 4px;border:0;color:var(--primary);background:transparent;font-weight:500}.btn-link:hover{color:var(--primary-dark)}.icon-btn{width:34px;height:34px;padding:0;border:0;border-radius:4px;display:grid;place-items:center;color:#747a83;background:transparent}.icon-btn:hover{color:var(--primary);background:var(--primary-soft)}
+    .filter-panel{background:#fff;border:1px solid #eceef1;box-shadow:0 2px 7px rgba(31,35,41,.04)}.page-title{min-height:58px;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid #f0f1f3}.page-title h1{margin:0;font-size:17px;letter-spacing:0}.page-title p{margin:3px 0 0;color:var(--muted);font-size:12px}.filters{min-height:118px;padding:24px 30px;display:grid;grid-template-columns:minmax(300px,1fr) minmax(300px,1fr) auto;gap:24px 38px;align-items:center}.field{display:flex;align-items:center;gap:12px}.field label{min-width:92px;color:#343940;text-align:right;font-weight:600}.input-wrap{position:relative;flex:1}.input-wrap>svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:#a1a6ae}.input-wrap input{padding-left:35px}input,select{width:100%;height:40px;padding:8px 11px;border:1px solid var(--line-strong);border-radius:5px;color:var(--text);background:#fff;outline:0}input::placeholder{color:#b4b8bf}input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(22,119,255,.1)}.field select{flex:1}.filter-actions,.toolbar-actions{display:flex;gap:10px;justify-content:flex-end}.panel{margin-top:16px;overflow:hidden;background:var(--surface);border:1px solid #eceef1;box-shadow:0 2px 7px rgba(31,35,41,.04)}.table-toolbar{min-height:60px;padding:10px 18px;display:flex;align-items:center;justify-content:flex-end;border-bottom:1px solid var(--line)}
+    .table-wrap{overflow-x:auto}.table{width:100%;table-layout:fixed;border-collapse:collapse}.table th,.table td{padding:14px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.table th{height:48px;color:#272b31;background:#fafafa;font-weight:600}.table tbody tr:hover{background:#f7fbff}.table tbody tr.selected{background:#f0f7ff}.table tbody tr:last-child td{border-bottom:0}.row-check{width:16px;height:16px;margin:0;display:block;accent-color:var(--primary);cursor:pointer}.entity-pair{display:flex;align-items:baseline;gap:10px;min-width:0}.entity-code{color:#4f555d;font-variant-numeric:tabular-nums}.entity-name{overflow:hidden;text-overflow:ellipsis;font-weight:600}.company-value{display:flex;align-items:baseline;gap:9px;min-width:0}.company-value .entity-name{font-weight:400}.muted{color:var(--muted)}.empty{padding:70px 20px;text-align:center;color:var(--muted)}.empty-icon{width:48px;height:48px;margin:0 auto 12px;border-radius:50%;display:grid;place-items:center;color:#8d939c;background:#f1f3f5}.empty h3{margin:0 0 5px;color:var(--text);font-size:15px}.empty p{margin:0 0 15px}.pagination{min-height:55px;padding:10px 18px;display:flex;align-items:center;justify-content:flex-end;gap:16px;border-top:1px solid var(--line);color:var(--muted);font-size:12px}.page-buttons{display:flex;align-items:center;gap:5px}.page-button{width:30px;height:30px;border:1px solid var(--line);border-radius:4px;display:grid;place-items:center;color:var(--muted);background:#fff}.page-button.active{color:#fff;background:var(--primary);border-color:var(--primary)}.page-button:disabled{cursor:not-allowed;opacity:.45}
+    .overlay{position:fixed;inset:0;z-index:50;display:none;background:rgba(31,35,41,.45)}.overlay.open{display:block}.modal{position:fixed;visibility:hidden;z-index:51;left:50%;top:50%;width:min(640px,calc(100vw - 32px));max-height:calc(100vh - 40px);overflow:auto;transform:translate(-50%,-48%);opacity:0;pointer-events:none;border-radius:6px;background:#fff;box-shadow:var(--shadow);transition:opacity .18s,transform .18s,visibility 0s .18s}.modal.open{visibility:visible;opacity:1;pointer-events:auto;transform:translate(-50%,-50%);transition-delay:0s}.confirm-modal{width:min(430px,calc(100vw - 32px))}.modal-head{padding:17px 22px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line)}.modal-head h2{margin:0 0 3px;font-size:17px;letter-spacing:0}.modal-head p{margin:0;color:var(--muted);font-size:12px}.modal-body{padding:22px}.confirm-content{display:flex;align-items:flex-start;gap:13px}.confirm-icon{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;flex:none;color:var(--red);background:#fff1f0}.confirm-content p{margin:2px 0 0;line-height:1.7}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:17px 16px}.form-field.full{grid-column:1/-1}.form-field label{display:block;margin-bottom:6px;font-weight:600}.required{color:var(--red)}.form-field input{height:40px}.field-error{min-height:18px;margin-top:4px;color:var(--red);font-size:12px}.form-field.invalid input,.form-field.invalid .entity-select{border-color:var(--red)}.form-field.invalid input:focus{box-shadow:0 0 0 2px rgba(255,77,79,.1)}
+    .entity-select{position:relative;min-height:42px;border:1px solid var(--line-strong);border-radius:5px;background:#fff}.entity-trigger{width:100%;min-height:40px;padding:5px 36px 5px 8px;border:0;display:flex;align-items:center;flex-wrap:wrap;gap:5px;color:var(--text);background:transparent;text-align:left}.entity-trigger>svg{position:absolute;right:10px;top:12px;color:var(--muted)}.placeholder{padding:4px 2px;color:#b4b8bf}.selected-person{padding:4px 2px;color:#262626}.selected-tag{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border:1px solid #bae0ff;border-radius:3px;color:var(--primary);background:#f0f8ff;font-size:12px}.selected-tag .remove{padding:0;border:0;display:grid;place-items:center;color:#69a8ea;background:transparent}.entity-popover{position:absolute;z-index:5;left:-1px;right:-1px;top:calc(100% + 6px);display:none;padding:8px;border:1px solid var(--line-strong);border-radius:5px;background:#fff;box-shadow:0 12px 30px rgba(31,35,41,.14)}.entity-select.open .entity-popover{display:block}.entity-search{position:relative;margin-bottom:6px}.entity-search svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:#8a959c}.entity-search input{height:34px;padding-left:31px}.entity-options{max-height:190px;overflow:auto}.entity-option{width:100%;padding:9px;border:0;border-radius:3px;display:flex;align-items:center;gap:9px;color:var(--text);background:#fff;text-align:left;cursor:pointer}.entity-option:hover,.entity-option.active{background:#f0f7ff}.entity-option input{width:15px;height:15px;accent-color:var(--primary)}.option-code{min-width:76px;color:#515761;font-variant-numeric:tabular-nums}.option-divider{color:#c3c6cb}.option-name{font-weight:500}.no-options{padding:20px;text-align:center;color:var(--muted);font-size:12px}.modal-foot{padding:13px 22px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--line)}.toast{position:fixed;z-index:70;right:22px;bottom:22px;max-width:calc(100vw - 44px);padding:11px 14px;display:flex;align-items:center;gap:8px;color:#fff;background:#2f3540;border-radius:5px;box-shadow:var(--shadow);opacity:0;transform:translateY(12px);pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translateY(0)}
+    @media(max-width:1040px){.global-header{grid-template-columns:220px minmax(0,1fr) auto}.brand{padding:0 18px}.workspace{grid-template-columns:220px minmax(0,1fr)}.filters{grid-template-columns:1fr 1fr}.filter-actions{grid-column:1/-1}.global-nav button{padding:0 13px}.global-nav button.active::after{left:13px;right:13px}}
+    @media(max-width:760px){.global-header{height:56px;grid-template-columns:1fr auto}.brand{font-size:17px}.global-nav{display:none}.header-user{padding:0 14px}.notice-btn{display:none}.workspace{min-height:calc(100vh - 56px);grid-template-columns:1fr}.sidebar{display:none}.page-tabs{height:48px;padding:0 6px}.page-tab{height:40px;padding:0 10px}.breadcrumb{height:46px;padding:0 12px}.page{padding:12px}.filters{grid-template-columns:1fr;padding:18px 14px;gap:14px}.field{align-items:stretch;flex-direction:column;gap:6px}.field label{min-width:0;text-align:left}.filter-actions{grid-column:auto}.filter-actions .btn{flex:1}.toolbar-actions{width:100%}.toolbar-actions .btn{flex:1}.table{min-width:1110px}.form-grid{grid-template-columns:1fr}.form-field.full{grid-column:auto}.pagination{align-items:flex-start;flex-direction:column}.user strong,.user>svg{display:none}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="global-header">
+    <div class="brand"><span class="brand-mark"><i data-lucide="archive" class="icon"></i></span><span>档案管理中台</span></div>
+    <nav class="global-nav" aria-label="顶部导航"><button>工作台</button><button class="active">投标档案库</button><button>风险管理部</button><button>公司履约案例</button></nav>
+    <div class="header-user"><button class="notice-btn" title="待办消息"><i data-lucide="inbox" style="width:22px;height:22px"></i><span class="notice-dot">3</span></button><div class="user"><div class="avatar">管</div><strong>系统管理员</strong><i data-lucide="chevron-down" class="icon"></i></div></div>
+  </header>
+  <div class="workspace">
+    <aside class="sidebar">
+      <div class="side-search"><div class="input-wrap"><i data-lucide="search" class="icon"></i><input placeholder="搜索" aria-label="搜索菜单"></div></div>
+      <nav class="side-nav" aria-label="侧边导航">
+        <button class="side-item"><i data-lucide="download" class="icon"></i>检索下载</button>
+        <button class="side-item"><i data-lucide="list-filter" class="icon"></i>检索下载（新）</button>
+        <div class="side-section">组织与权限</div>
+        <button class="side-item parent"><i data-lucide="folder-open" class="icon"></i>系统设置<i data-lucide="chevron-up" class="icon" style="margin-left:auto"></i></button>
+        <button class="side-item child">公司管理</button>
+        <button class="side-item child active">公司人员配置</button>
+        <button class="side-item child">角色权限</button>
+        <button class="side-item child">操作日志</button>
+        <div class="side-section">档案分类</div>
+        <button class="side-item child">基本证件</button>
+        <button class="side-item child">人员证书</button>
+        <button class="side-item child">荣誉证书</button>
+      </nav>
+      <div class="side-footer"><i data-lucide="panel-left-close" class="icon"></i></div>
+    </aside>
+    <div class="main">
+      <div class="page-tabs"><button class="page-tab"><span class="tab-dot"></span>工作台<span class="tab-close"><i data-lucide="x" style="width:14px;height:14px"></i></span></button><button class="page-tab active"><span class="tab-dot"></span>公司人员配置<span class="tab-close"><i data-lucide="x" style="width:14px;height:14px"></i></span></button></div>
+      <div class="breadcrumb"><span>系统设置</span><span>/</span><span>公司与人员</span><span>/</span><strong>公司人员配置</strong></div>
+      <main class="page">
+        <section class="filter-panel">
+          <header class="page-title"><div><h1>公司人员配置</h1><p>维护公司与人员的配置关系</p></div></header>
+          <div class="filters">
+            <div class="field"><label for="companyFilter">公司：</label><select id="companyFilter"><option value="">全部公司</option></select></div>
+            <div class="field"><label for="keyword">工号 / 名称：</label><div class="input-wrap"><i data-lucide="search" class="icon"></i><input id="keyword" placeholder="请输入工号或人员名称" autocomplete="off"></div></div>
+            <div class="filter-actions"><button class="btn" id="resetBtn">重置</button><button class="btn btn-primary" id="searchBtn"><i data-lucide="search" class="icon"></i>查询</button></div>
+          </div>
+        </section>
+        <section class="panel">
+          <div class="table-toolbar"><div class="toolbar-actions"><button class="btn btn-danger" id="deleteBtn" disabled><i data-lucide="trash-2" class="icon"></i>删除</button><button class="btn btn-primary" id="addBtn"><i data-lucide="plus" class="icon"></i>新增</button></div></div>
+          <div class="table-wrap" id="tableWrap"></div>
+          <footer class="pagination"><span id="pageSummary"></span><div class="page-buttons"><button class="page-button" disabled title="上一页"><i data-lucide="chevron-left" class="icon"></i></button><button class="page-button active">1</button><button class="page-button" disabled title="下一页"><i data-lucide="chevron-right" class="icon"></i></button></div></footer>
+        </section>
+      </main>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<section class="modal" id="formModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-hidden="true">
+  <header class="modal-head"><div><h2 id="modalTitle">新增配置</h2><p id="modalSubtitle">填写人员信息并选择所属公司</p></div><button class="icon-btn" id="closeBtn" title="关闭"><i data-lucide="x"></i></button></header>
+  <div class="modal-body">
+    <div class="form-grid">
+      <div class="form-field full" id="companiesField"><label><span class="required">*</span> 公司</label>
+        <div class="entity-select" id="companySelect">
+          <button class="entity-trigger" id="companyTrigger" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="placeholder">请选择公司</span><i data-lucide="chevron-down" class="icon"></i></button>
+          <div class="entity-popover"><div class="entity-search"><i data-lucide="search" class="icon"></i><input id="companySearch" placeholder="搜索公司编码或名称" autocomplete="off"></div><div class="entity-options" id="companyOptions"></div></div>
+        </div>
+        <div class="field-error"></div>
+      </div>
+      <div class="form-field full" id="personField"><label><span class="required">*</span> 人员</label>
+        <div class="entity-select" id="personSelect">
+          <button class="entity-trigger" id="personTrigger" type="button" aria-haspopup="listbox" aria-expanded="false"><span class="placeholder">请选择人员</span><i data-lucide="chevron-down" class="icon"></i></button>
+          <div class="entity-popover"><div class="entity-search"><i data-lucide="search" class="icon"></i><input id="personSearch" placeholder="搜索工号或姓名" autocomplete="off"></div><div class="entity-options" id="personOptions"></div></div>
+        </div>
+        <div class="field-error"></div>
+      </div>
+    </div>
+  </div>
+  <footer class="modal-foot"><button class="btn" id="cancelBtn">取消</button><button class="btn btn-primary" id="saveBtn"><i data-lucide="check" class="icon"></i>保存</button></footer>
+</section>
+<section class="modal confirm-modal" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle" aria-hidden="true">
+  <header class="modal-head"><div><h2 id="deleteModalTitle">删除配置</h2><p>删除公司与人员的配置关系</p></div><button class="icon-btn" id="closeDeleteBtn" title="关闭"><i data-lucide="x"></i></button></header>
+  <div class="modal-body"><div class="confirm-content"><span class="confirm-icon"><i data-lucide="triangle-alert" class="icon"></i></span><p id="deleteMessage"></p></div></div>
+  <footer class="modal-foot"><button class="btn" id="cancelDeleteBtn">取消</button><button class="btn btn-danger" id="confirmDeleteBtn">确认删除</button></footer>
+</section>
+<div class="toast" id="toast"><i data-lucide="circle-check" class="icon"></i><span></span></div>
+
+<script>
+const companies=[
+  {code:'C0001',name:'永辉集团总部'},
+  {code:'C0101',name:'北京永辉超市有限公司'},
+  {code:'C0201',name:'上海永辉超市有限公司'},
+  {code:'C0301',name:'福建永辉彩食鲜发展有限公司'},
+  {code:'C0401',name:'四川永辉物流有限公司'},
+  {code:'C0501',name:'重庆永辉超市有限公司'}
+];
+const personDirectory=[
+  {employeeId:'YH10086',name:'张晓林'},
+  {employeeId:'YH10217',name:'李思雨'},
+  {employeeId:'YH10305',name:'王一凡'},
+  {employeeId:'YH10628',name:'陈嘉禾'},
+  {employeeId:'YH10811',name:'周敏'},
+  {employeeId:'YH10999',name:'赵新宇'},
+  {employeeId:'YH11028',name:'林静怡'}
+];
+let people=[
+  {id:1,employeeId:'YH10086',name:'张晓林',companyCode:'C0001',createdBy:'洪亮',createdAt:'2026-09-01 09:16',modifiedBy:'王珊',modifiedAt:'2026-09-16 14:32'},
+  {id:2,employeeId:'YH10217',name:'李思雨',companyCode:'C0101',createdBy:'洪亮',createdAt:'2026-09-02 10:05',modifiedBy:'李文',modifiedAt:'2026-09-15 09:18'},
+  {id:3,employeeId:'YH10305',name:'王一凡',companyCode:'C0201',createdBy:'张敏',createdAt:'2026-09-03 11:24',modifiedBy:'洪亮',modifiedAt:'2026-09-12 16:45'},
+  {id:4,employeeId:'YH10628',name:'陈嘉禾',companyCode:'C0501',createdBy:'洪亮',createdAt:'2026-09-05 14:08',modifiedBy:'洪亮',modifiedAt:'2026-09-10 11:06'},
+  {id:5,employeeId:'YH10811',name:'周敏',companyCode:'C0301',createdBy:'王珊',createdAt:'2026-09-08 17:20',modifiedBy:'',modifiedAt:''}
+];
+let filters={keyword:'',company:''};
+let form={mode:'add',editingId:null,companyCode:'',personId:''};
+let selectedIds=new Set();
+const $=selector=>document.querySelector(selector);
+const $$=selector=>[...document.querySelectorAll(selector)];
+const escapeHtml=value=>String(value).replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+
+function refreshIcons(){if(window.lucide)lucide.createIcons()}
+function companyByCode(code){return companies.find(company=>company.code===code)}
+function personById(employeeId){return personDirectory.find(person=>person.employeeId===employeeId)}
+function companyLabel(code){const company=companyByCode(code);return company?`${company.code} ${company.name}`:code}
+function personLabel(employeeId){const person=personById(employeeId);return person?`${person.employeeId} ${person.name}`:employeeId}
+function filteredPeople(){const keyword=filters.keyword.toLowerCase();return people.filter(person=>(!keyword||`${person.employeeId} ${person.name}`.toLowerCase().includes(keyword))&&(!filters.company||person.companyCode===filters.company))}
+function updateDeleteButton(){$('#deleteBtn').disabled=selectedIds.size===0}
+function renderTable(){
+  const data=filteredPeople();
+  $('#pageSummary').textContent=data.length?`第 1–${data.length} 条，共 ${data.length} 条`:'共 0 条';
+  const allSelected=data.length>0&&data.every(person=>selectedIds.has(person.id));
+  const someSelected=data.some(person=>selectedIds.has(person.id));
+  $('#tableWrap').innerHTML=data.length?`<table class="table"><thead><tr><th style="width:42px"><input class="row-check" id="selectAll" type="checkbox" aria-label="全选当前列表" ${allSelected?'checked':''}></th><th style="width:55px">序号</th><th style="width:200px">公司</th><th style="width:160px">人员</th><th style="width:95px">创建人</th><th style="width:150px">创建时间</th><th style="width:95px">修改人</th><th style="width:150px">修改时间</th><th style="width:70px">操作</th></tr></thead><tbody>${data.map((person,index)=>{const company=companyByCode(person.companyCode);const checked=selectedIds.has(person.id);return `<tr class="${checked?'selected':''}"><td><input class="row-check row-selector" type="checkbox" data-id="${person.id}" aria-label="选择 ${escapeHtml(person.name)}" ${checked?'checked':''}></td><td class="muted">${String(index+1).padStart(2,'0')}</td><td title="${escapeHtml(companyLabel(person.companyCode))}"><div class="company-value"><span class="entity-code">${escapeHtml(company?.code||person.companyCode)}</span><span class="entity-name">${escapeHtml(company?.name||'')}</span></div></td><td><div class="entity-pair"><span class="entity-code">${escapeHtml(person.employeeId)}</span><span class="entity-name">${escapeHtml(person.name)}</span></div></td><td>${escapeHtml(person.createdBy)}</td><td class="muted">${person.createdAt}</td><td>${escapeHtml(person.modifiedBy||'—')}</td><td class="muted">${person.modifiedAt||'—'}</td><td><button class="btn-link edit-btn" data-id="${person.id}"><i data-lucide="pencil" class="icon"></i>编辑</button></td></tr>`}).join('')}</tbody></table>`:`<div class="empty"><div class="empty-icon"><i data-lucide="search-x"></i></div><h3>没有匹配的配置</h3><p>请调整搜索关键词或公司筛选条件</p><button class="btn" id="clearFilters">清除筛选</button></div>`;
+  if($('#selectAll')){$('#selectAll').indeterminate=someSelected&&!allSelected;$('#selectAll').onchange=event=>{data.forEach(person=>event.target.checked?selectedIds.add(person.id):selectedIds.delete(person.id));renderTable()}}
+  $$('.row-selector').forEach(checkbox=>checkbox.onchange=()=>{const id=Number(checkbox.dataset.id);checkbox.checked?selectedIds.add(id):selectedIds.delete(id);renderTable()});
+  $$('.edit-btn').forEach(button=>button.onclick=()=>openEdit(Number(button.dataset.id)));
+  if($('#clearFilters'))$('#clearFilters').onclick=resetFilters;
+  updateDeleteButton();
+  refreshIcons();
+}
+function render(){renderTable()}
+function runSearch(){filters.keyword=$('#keyword').value.trim();filters.company=$('#companyFilter').value;selectedIds.clear();renderTable()}
+function resetFilters(){filters={keyword:'',company:''};selectedIds.clear();$('#keyword').value='';$('#companyFilter').value='';renderTable()}
+
+function openAdd(){form={mode:'add',editingId:null,companyCode:'',personId:''};$('#modalTitle').textContent='新增配置';$('#modalSubtitle').textContent='选择公司及关联人员';clearErrors();renderCompanyOptions();renderPersonOptions();openModal();setTimeout(()=>$('#companyTrigger').focus(),100)}
+function openEdit(id){const person=people.find(item=>item.id===id);if(!person)return;form={mode:'edit',editingId:id,companyCode:person.companyCode,personId:person.employeeId};$('#modalTitle').textContent='编辑配置';$('#modalSubtitle').textContent=`正在编辑 ${companyLabel(person.companyCode)} 的人员配置`;clearErrors();renderCompanyOptions();renderPersonOptions();openModal();setTimeout(()=>$('#companyTrigger').focus(),100)}
+function openModal(){$('#overlay').classList.add('open');$('#formModal').classList.add('open');$('#formModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden'}
+function closeSelects(){$$('.entity-select').forEach(select=>select.classList.remove('open'));$$('.entity-trigger').forEach(trigger=>trigger.setAttribute('aria-expanded','false'))}
+function closeModal(){closeSelects();$('#overlay').classList.remove('open');$('#formModal').classList.remove('open');$('#formModal').setAttribute('aria-hidden','true');document.body.style.overflow=''}
+function openDeleteModal(){if(!selectedIds.size)return;$('#deleteMessage').textContent=`确定删除已选中的 ${selectedIds.size} 条配置吗？删除后不可恢复。`;$('#overlay').classList.add('open');$('#deleteModal').classList.add('open');$('#deleteModal').setAttribute('aria-hidden','false');document.body.style.overflow='hidden';setTimeout(()=>$('#confirmDeleteBtn').focus(),100)}
+function closeDeleteModal(){$('#overlay').classList.remove('open');$('#deleteModal').classList.remove('open');$('#deleteModal').setAttribute('aria-hidden','true');document.body.style.overflow=''}
+function closeActiveModal(){if($('#deleteModal').classList.contains('open'))closeDeleteModal();else if($('#formModal').classList.contains('open'))closeModal()}
+function deleteSelected(){people=people.filter(person=>!selectedIds.has(person.id));selectedIds.clear();closeDeleteModal();render();showToast('删除成功')}
+
+function renderPersonOptions(search=''){
+  const keyword=search.trim().toLowerCase();
+  const matched=personDirectory.filter(person=>`${person.employeeId} ${person.name}`.toLowerCase().includes(keyword));
+  $('#personOptions').innerHTML=matched.length?matched.map(person=>`<button class="entity-option ${form.personId===person.employeeId?'active':''}" type="button" data-person-id="${person.employeeId}"><span class="option-code">${person.employeeId}</span><span class="option-name">${escapeHtml(person.name)}</span></button>`).join(''):'<div class="no-options">没有匹配的人员</div>';
+  $$('#personOptions .entity-option').forEach(button=>button.onclick=()=>{form.personId=button.dataset.personId;clearFieldError('personField');renderPersonTrigger();closeSelects()});
+  renderPersonTrigger();
+}
+function renderPersonTrigger(){
+  $('#personTrigger').innerHTML=form.personId?`<span class="selected-person">${escapeHtml(personLabel(form.personId))}</span><i data-lucide="chevron-down" class="icon"></i>`:`<span class="placeholder">请选择人员</span><i data-lucide="chevron-down" class="icon"></i>`;
+  refreshIcons();
+}
+
+function renderCompanyOptions(search=''){
+  const keyword=search.trim().toLowerCase();
+  const matched=companies.filter(company=>`${company.code} ${company.name}`.toLowerCase().includes(keyword));
+  $('#companyOptions').innerHTML=matched.length?matched.map(company=>`<button class="entity-option ${form.companyCode===company.code?'active':''}" type="button" data-company-code="${company.code}"><span class="option-code">${company.code}</span><span class="option-name">${escapeHtml(company.name)}</span></button>`).join(''):'<div class="no-options">没有匹配的公司</div>';
+  $$('#companyOptions .entity-option').forEach(button=>button.onclick=()=>{form.companyCode=button.dataset.companyCode;clearFieldError('companiesField');renderCompanyTrigger();closeSelects()});
+  renderCompanyTrigger();
+}
+function renderCompanyTrigger(){
+  $('#companyTrigger').innerHTML=form.companyCode?`<span class="selected-person">${escapeHtml(companyLabel(form.companyCode))}</span><i data-lucide="chevron-down" class="icon"></i>`:`<span class="placeholder">请选择公司</span><i data-lucide="chevron-down" class="icon"></i>`;
+  refreshIcons();
+}
+function toggleEntitySelect(type){const select=$(`#${type}Select`);const opening=!select.classList.contains('open');closeSelects();select.classList.toggle('open',opening);$(`#${type}Trigger`).setAttribute('aria-expanded',String(opening));if(opening){const search=$(`#${type}Search`);search.value='';type==='person'?renderPersonOptions():renderCompanyOptions();setTimeout(()=>search.focus(),0)}}
+
+function clearErrors(){$$('.form-field').forEach(field=>{field.classList.remove('invalid');field.querySelector('.field-error').textContent=''})}
+function clearFieldError(id){const field=$(`#${id}`);field.classList.remove('invalid');field.querySelector('.field-error').textContent=''}
+function setError(id,message){const field=$(`#${id}`);field.classList.add('invalid');field.querySelector('.field-error').textContent=message}
+function validate(){
+  clearErrors();
+  let valid=true;
+  if(!form.companyCode){setError('companiesField','请选择公司');valid=false}
+  if(!form.personId){setError('personField','请选择人员');valid=false}else if(people.some(person=>person.employeeId===form.personId&&person.id!==form.editingId)){setError('personField','该人员已配置，请直接编辑原配置');valid=false}
+  if(!valid){const first=$('.form-field.invalid input, .form-field.invalid .entity-trigger');if(first)first.focus()}
+  return valid;
+}
+function save(){
+  if(!validate())return;
+  const selectedPerson=personById(form.personId);const timestamp='2026-09-17 '+new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',hour12:false});
+  const data={employeeId:selectedPerson.employeeId,name:selectedPerson.name,companyCode:form.companyCode};
+  if(form.mode==='add'){people.unshift({id:Math.max(...people.map(person=>person.id),0)+1,...data,createdBy:'系统管理员',createdAt:timestamp,modifiedBy:'',modifiedAt:''})}else{const index=people.findIndex(person=>person.id===form.editingId);people[index]={...people[index],...data,modifiedBy:'系统管理员',modifiedAt:timestamp}}
+  closeModal();render();showToast(form.mode==='add'?'新增成功':'保存成功');
+}
+function showToast(message){$('#toast span').textContent=message;$('#toast').classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>$('#toast').classList.remove('show'),2200)}
+
+$('#companyFilter').innerHTML+=companies.map(company=>`<option value="${company.code}">${company.code} ${escapeHtml(company.name)}</option>`).join('');
+$('#addBtn').onclick=openAdd;$('#deleteBtn').onclick=openDeleteModal;$('#searchBtn').onclick=runSearch;$('#resetBtn').onclick=resetFilters;$('#keyword').onkeydown=event=>{if(event.key==='Enter')runSearch()};$('#companyFilter').onchange=runSearch;
+$('#closeBtn').onclick=$('#cancelBtn').onclick=closeModal;$('#closeDeleteBtn').onclick=$('#cancelDeleteBtn').onclick=closeDeleteModal;$('#confirmDeleteBtn').onclick=deleteSelected;$('#overlay').onclick=closeActiveModal;$('#saveBtn').onclick=save;$('#personTrigger').onclick=()=>toggleEntitySelect('person');$('#companyTrigger').onclick=()=>toggleEntitySelect('company');$('#personSearch').oninput=event=>renderPersonOptions(event.target.value);$('#companySearch').oninput=event=>renderCompanyOptions(event.target.value);
+document.addEventListener('click',event=>{if(!event.target.closest('.entity-select'))closeSelects()});document.addEventListener('keydown',event=>{if(event.key==='Escape')closeActiveModal()});
+render();refreshIcons();
+</script>
+</body>
+</html>
