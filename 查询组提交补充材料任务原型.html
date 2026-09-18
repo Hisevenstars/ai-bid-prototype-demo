@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI写标 - 查询组提交补充材料任务原型</title>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root{
+      --primary:#1677ff;--primary-hover:#0f66df;--primary-soft:#eaf3ff;--text:#1f2329;--muted:#7b8290;
+      --line:#e3e7ed;--panel:#fff;--canvas:#f6f7f9;--danger:#f04438;--success:#1f9d55;--success-soft:#edf9f2;
+      --shadow:0 14px 40px rgba(31,35,41,.16);--radius:6px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{overflow:hidden;color:var(--text);background:#fff;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;letter-spacing:0}
+    button,input,textarea{font:inherit;color:inherit}
+    button{cursor:pointer}.icon{width:17px;height:17px;stroke-width:1.9;flex:0 0 auto}
+    .app{height:100vh;min-height:680px;display:grid;grid-template-rows:72px minmax(0,1fr)}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 24px;border-bottom:1px solid var(--line);background:#fff}
+    .title-wrap{display:flex;align-items:center;gap:18px;min-width:0}.back{display:inline-flex;align-items:center;gap:6px;border:0;background:#f4f5f7;color:#69707d;padding:8px 12px;border-radius:5px}.back:hover{background:#eceef1}
+    .doc-title{min-width:0}.doc-title h1{font-size:18px;margin:0;font-weight:650}.doc-title p{margin:3px 0 0;color:#a0a6b0}
+    .top-action{display:inline-flex;align-items:center;gap:7px;border:0;border-radius:6px;padding:10px 18px;background:var(--primary);color:#fff;font-weight:600;box-shadow:0 2px 5px rgba(22,119,255,.24)}
+    .workspace{min-height:0;display:grid;grid-template-columns:minmax(450px,46%) minmax(550px,54%)}
+    .builder{min-width:0;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) 64px;border-right:1px solid var(--line);background:#fff}
+    .quick-wrap{padding:14px 22px 6px}.quick{padding:12px;background:var(--canvas);border-radius:var(--radius)}
+    .quick textarea{display:block;width:100%;height:74px;resize:none;border:1px solid var(--primary);outline:none;border-radius:6px;padding:11px 13px;background:#fff}.quick textarea::placeholder{color:#b8bec8}
+    .quick-actions{display:flex;justify-content:flex-end;margin-top:10px}.smart-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border:0;border-radius:5px;background:var(--primary);color:#fff}
+    .groups{overflow:auto;padding:0 22px 18px}.query-card{border:1px solid #dfe3e8;border-radius:7px;margin-top:12px;background:#fff;box-shadow:0 1px 2px rgba(31,35,41,.03)}
+    .card-head{display:flex;align-items:center;justify-content:space-between;padding:15px 18px 8px}.card-title{font-size:15px;font-weight:650}.card-title small{font-size:13px;color:#9096a1;font-weight:500;margin-left:8px}
+    .text-danger{display:inline-flex;align-items:center;gap:5px;border:0;background:transparent;color:var(--danger);padding:4px}
+    .forms-row{display:flex;align-items:center;gap:9px;padding:0 18px 12px;color:#606775}.form-chip{border:0;border-radius:4px;background:#f2f3f5;padding:5px 12px}.form-chip.active{background:var(--primary-soft);box-shadow:inset 0 0 0 1px #a7c8ff;color:var(--primary)}
+    .condition{margin:0 18px 12px;display:grid;grid-template-columns:145px minmax(0,1fr) 36px;min-height:48px;border:1px solid #b957ff;border-radius:7px;overflow:hidden}
+    .condition strong{display:flex;align-items:center;justify-content:center;background:#fbfbfc;font-size:15px}.condition .value{display:flex;align-items:center;justify-content:space-between;padding:0 14px;border-left:1px solid var(--line);color:#343943}.condition .remove{display:grid;place-items:center;border:0;border-left:1px solid var(--line);background:#fff;color:var(--danger)}
+    .logic-row{display:grid;grid-template-columns:minmax(0,1fr) 68px;gap:8px;padding:0 18px 10px}.logic-field{display:flex;align-items:center;justify-content:space-between;border:1px solid #d5dae1;border-radius:6px;height:38px;padding:0 10px}.tag-field{display:inline-flex;align-items:center;gap:4px;background:#f1f2f4;border-radius:4px;padding:3px 7px}.collapse{border:0;border-radius:5px;background:#f2f3f5;color:#59606c}
+    .add-row{display:flex;gap:18px;padding:0 18px 16px}.link-btn{display:inline-flex;align-items:center;gap:5px;border:0;background:transparent;color:var(--primary);font-weight:550;padding:0}.link-btn .icon{width:15px;height:15px}
+    .builder-footer{display:flex;align-items:center;justify-content:center;gap:20px;border-top:1px solid var(--line);background:#fff;box-shadow:0 -4px 12px rgba(31,35,41,.03)}
+    .outline-btn,.search-btn{height:40px;display:inline-flex;align-items:center;gap:7px;padding:0 18px;border-radius:5px}.outline-btn{border:1px solid #cfd4dc;background:#fff}.search-btn{border:0;background:var(--primary);color:#fff;font-weight:600}
+    .results{min-width:0;display:grid;grid-template-rows:63px 53px minmax(0,1fr);background:var(--canvas)}
+    .tabs{display:flex;align-items:end;gap:34px;padding:0 22px;border-bottom:1px solid var(--line)}.tab{position:relative;height:63px;border:0;background:transparent;font-size:16px;font-weight:550;padding:0 1px}.tab.active{color:var(--primary)}.tab.active::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:3px;background:var(--primary)}
+    .result-tools{display:flex;align-items:center;justify-content:space-between;padding:0 22px;background:var(--canvas)}.result-count{font-size:15px;font-weight:600}.toolset{display:flex;align-items:center;gap:9px}
+    .task-btn{height:36px;display:inline-flex;align-items:center;gap:7px;border:1px solid var(--primary);border-radius:5px;background:#fff;color:var(--primary);padding:0 13px;font-weight:600;white-space:nowrap}.task-btn:hover{background:var(--primary-soft)}.task-btn.submitted{border-color:#9fd5b6;color:var(--success);background:var(--success-soft)}
+    .select-all,.view-btn{height:36px;border-radius:5px;padding:0 11px;border:1px solid #d9dde3;background:#fff;display:inline-flex;align-items:center;gap:6px}.select-all:disabled{color:#adb3bd;background:#f1f2f4}.view-btn.active{color:#fff;background:var(--primary);border-color:var(--primary)}
+    .result-body{position:relative;display:grid;place-items:center;overflow:auto;padding:24px}.empty{text-align:center;color:#7f8793}.empty-visual{position:relative;width:150px;height:116px;margin:0 auto 16px}.empty-box{position:absolute;left:29px;right:29px;bottom:5px;height:58px;border:2px solid #4c5868;border-radius:5px;background:#3787f5;transform:skewY(-2deg)}.empty-box::before,.empty-box::after{content:"";position:absolute;left:20px;height:4px;border-radius:3px;background:#fff}.empty-box::before{width:60px;top:17px}.empty-box::after{width:48px;top:34px}.empty-doc{position:absolute;width:68px;height:52px;left:42px;top:18px;border:2px solid #4c5868;border-radius:5px;background:#fff;transform:rotate(-8deg)}.empty-doc::before,.empty-doc::after{content:"";position:absolute;height:3px;background:#b7c0cc;left:11px;border-radius:3px}.empty-doc::before{width:42px;top:15px}.empty-doc::after{width:31px;top:27px}
+    .loaded-list{width:min(760px,100%);align-self:start;display:none}.result-item{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:12px;align-items:center;padding:14px;border-bottom:1px solid var(--line);background:#fff}.result-item:first-child{border-radius:6px 6px 0 0}.result-item:last-child{border-radius:0 0 6px 6px}.avatar{width:36px;height:36px;display:grid;place-items:center;border-radius:50%;background:#eaf3ff;color:#1677ff;font-weight:700}.result-item strong{display:block}.result-item span{color:var(--muted);font-size:13px}.status{padding:4px 8px;border-radius:4px;background:#edf9f2;color:var(--success)!important}
+    .shade{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(22,29,38,.48)}.shade.show{display:flex}.modal{width:min(720px,100%);max-height:calc(100vh - 44px);overflow:auto;border-radius:8px;background:#fff;box-shadow:var(--shadow)}
+    .modal-head{height:62px;display:flex;align-items:center;justify-content:space-between;padding:0 22px;border-bottom:1px solid var(--line)}.modal-title{font-size:18px;font-weight:650}.icon-btn{width:34px;height:34px;display:grid;place-items:center;border:0;border-radius:5px;background:transparent;color:#727985}.icon-btn:hover{background:#f1f2f4}
+    .modal-body{padding:20px 22px}.context{display:grid;grid-template-columns:1.4fr 1fr 1fr;border:1px solid var(--line);border-radius:6px;overflow:hidden}.context-cell{padding:12px 14px;background:#fafbfc;border-right:1px solid var(--line)}.context-cell:last-child{border-right:0}.label{display:block;color:var(--muted);font-size:12px;margin-bottom:4px}.context-cell strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .section-title{font-size:15px;font-weight:650;margin:20px 0 10px}.condition-preview{border:1px solid var(--line);border-radius:6px;overflow:hidden}.preview-meta{display:grid;grid-template-columns:1fr 1fr;background:#f7f8fa;border-bottom:1px solid var(--line)}.preview-meta>div{padding:10px 13px}.preview-meta>div+div{border-left:1px solid var(--line)}.preview-meta .label{margin-bottom:2px}.preview-table{width:100%;border-collapse:collapse}.preview-table th,.preview-table td{text-align:left;padding:10px 13px;border-bottom:1px solid #edf0f3}.preview-table tr:last-child td{border-bottom:0}.preview-table th{color:var(--muted);font-size:12px;font-weight:500;background:#fcfcfd}.logic-mark{display:inline-block;padding:2px 7px;border-radius:4px;background:#f1e9ff;color:#7e3dbb;font-size:12px}
+    .field textarea{width:100%;height:94px;resize:vertical;border:1px solid #cfd5dd;border-radius:6px;padding:10px 12px;outline:none}.field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 2px rgba(22,119,255,.12)}.field-foot{display:flex;justify-content:flex-end;margin-top:5px;color:#9299a5;font-size:12px}.notice{display:flex;gap:8px;align-items:flex-start;margin-top:16px;padding:10px 12px;border-radius:5px;background:#f2f7ff;color:#536174}.notice .icon{color:var(--primary);margin-top:2px}
+    .modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 22px;border-top:1px solid var(--line)}.btn{height:38px;display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:5px;padding:0 17px}.btn-secondary{border:1px solid #ced3da;background:#fff}.btn-primary{border:0;background:var(--primary);color:#fff;font-weight:600}.btn-primary:hover,.top-action:hover,.search-btn:hover,.smart-btn:hover{background:var(--primary-hover)}.btn:disabled{cursor:not-allowed;opacity:.65}
+    .success-view{padding:18px 0 4px;text-align:center}.success-icon{width:58px;height:58px;display:grid;place-items:center;margin:0 auto 14px;border-radius:50%;background:var(--success-soft);color:var(--success)}.success-icon .icon{width:30px;height:30px}.success-view h2{font-size:20px;margin:0 0 7px}.success-view>p{margin:0;color:var(--muted)}.task-summary{display:grid;grid-template-columns:1fr 1fr;margin:22px 0 4px;border:1px solid var(--line);border-radius:6px;text-align:left;overflow:hidden}.task-summary div{padding:12px 14px;background:#fafbfc}.task-summary div+div{border-left:1px solid var(--line)}
+    .toast{position:fixed;z-index:40;left:50%;bottom:28px;transform:translate(-50%,20px);display:flex;align-items:center;gap:8px;padding:11px 16px;border-radius:6px;background:#28313d;color:#fff;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:980px){body{overflow:auto}.app{height:auto;min-height:100vh}.workspace{grid-template-columns:1fr}.builder{min-height:720px;border-right:0;border-bottom:1px solid var(--line)}.results{min-height:620px}.modal{max-height:calc(100vh - 24px)}.shade{padding:12px}}
+    @media(max-width:640px){.app{grid-template-rows:64px auto}.topbar{padding:0 14px}.doc-title p,.top-action .button-text{display:none}.workspace{display:block}.builder{min-height:760px}.quick-wrap,.groups{padding-left:12px;padding-right:12px}.condition{grid-template-columns:112px minmax(0,1fr) 36px;margin-left:12px;margin-right:12px}.forms-row{overflow:auto;padding-left:12px;padding-right:12px}.add-row{flex-wrap:wrap;padding-left:12px}.results{min-height:560px}.tabs,.result-tools{padding-left:14px;padding-right:14px}.result-tools{height:auto;min-height:64px;align-items:flex-start;gap:10px;padding-top:12px;padding-bottom:12px}.toolset{flex-wrap:wrap;justify-content:flex-end}.task-btn{order:-1;width:100%}.context{grid-template-columns:1fr}.context-cell{border-right:0;border-bottom:1px solid var(--line)}.context-cell:last-child{border-bottom:0}.preview-meta{grid-template-columns:1fr}.preview-meta>div+div{border-left:0;border-top:1px solid var(--line)}.task-summary{grid-template-columns:1fr}.task-summary div+div{border-left:0;border-top:1px solid var(--line)}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="title-wrap">
+        <button class="back" type="button"><i data-lucide="chevron-left" class="icon"></i>返回</button>
+        <div class="doc-title"><h1>花名册1</h1><p>花名册1</p></div>
+      </div>
+      <button class="top-action" type="button"><i data-lucide="send" class="icon"></i><span class="button-text">提交写标</span></button>
+    </header>
+
+    <main class="workspace">
+      <section class="builder" aria-label="查询条件">
+        <div class="quick-wrap">
+          <div class="quick">
+            <textarea placeholder="快捷输入查询字段" aria-label="快捷输入查询字段"></textarea>
+            <div class="quick-actions"><button class="smart-btn" id="smartMatch" type="button"><i data-lucide="scan-search" class="icon"></i>智能匹配</button></div>
+          </div>
+        </div>
+        <div class="groups">
+          <article class="query-card" data-group="0">
+            <div class="card-head"><div class="card-title">查询组1 <small>（1字段）</small></div><button class="text-danger" type="button"><i data-lucide="trash-2" class="icon"></i>删除查询组</button></div>
+            <div class="forms-row"><span>档案类型</span><button class="form-chip active">人员花名册</button><button class="form-chip">人员证书</button><button class="form-chip">个人社保缴纳证明</button></div>
+            <div class="condition"><strong>有无驾驶证</strong><div class="value"><span>无</span><i data-lucide="chevron-down" class="icon"></i></div><button class="remove" title="移除条件"><i data-lucide="trash-2" class="icon"></i></button></div>
+            <div class="logic-row"><div class="logic-field"><span class="tag-field">有无驾驶证 <i data-lucide="x" class="icon"></i></span><i data-lucide="chevron-down" class="icon"></i></div><button class="collapse">收起</button></div>
+            <div class="add-row"><button class="link-btn"><i data-lucide="circle-plus" class="icon"></i>添加且字段到此组</button><button class="link-btn"><i data-lucide="circle-plus" class="icon"></i>添加或字段到此组</button></div>
+          </article>
+          <article class="query-card" data-group="1">
+            <div class="card-head"><div class="card-title">查询组2 <small>（1字段）</small></div><button class="text-danger" type="button"><i data-lucide="trash-2" class="icon"></i>删除查询组</button></div>
+            <div class="forms-row"><span>档案类型</span><button class="form-chip active">人员花名册</button><button class="form-chip">人员证书</button><button class="form-chip">个人社保缴纳证明</button></div>
+            <div class="condition"><strong>有无身份证</strong><div class="value"><span>有</span><i data-lucide="chevron-down" class="icon"></i></div><button class="remove" title="移除条件"><i data-lucide="trash-2" class="icon"></i></button></div>
+            <div class="logic-row"><div class="logic-field"><span class="tag-field">有无身份证 <i data-lucide="x" class="icon"></i></span><i data-lucide="chevron-down" class="icon"></i></div><button class="collapse">收起</button></div>
+            <div class="add-row"><button class="link-btn"><i data-lucide="circle-plus" class="icon"></i>添加且字段到此组</button><button class="link-btn"><i data-lucide="circle-plus" class="icon"></i>添加或字段到此组</button></div>
+          </article>
+        </div>
+        <footer class="builder-footer"><button class="outline-btn" type="button"><i data-lucide="circle-plus" class="icon"></i>新增查询组</button><button class="search-btn" id="searchNow" type="button"><i data-lucide="search" class="icon"></i>立即检索</button></footer>
+      </section>
+
+      <section class="results" aria-label="查询结果">
+        <div class="tabs" role="tablist">
+          <button class="tab active" type="button" data-index="0">查询组1（0）</button>
+          <button class="tab" type="button" data-index="1">查询组2（100）</button>
+        </div>
+        <div class="result-tools">
+          <div class="result-count">当前组检索结果已加载<span id="resultCount">0</span>条</div>
+          <div class="toolset">
+            <button class="task-btn" id="openTask" type="button"><i data-lucide="clipboard-plus" class="icon"></i><span>提交补充材料任务</span></button>
+            <button class="select-all" id="selectAll" type="button" disabled>全选</button>
+            <button class="view-btn active" type="button"><i data-lucide="layout-grid" class="icon"></i>卡片</button>
+            <button class="view-btn" type="button"><i data-lucide="list" class="icon"></i>列表</button>
+          </div>
+        </div>
+        <div class="result-body">
+          <div class="empty" id="emptyState"><div class="empty-visual"><div class="empty-doc"></div><div class="empty-box"></div></div><strong>暂无符合当前条件的材料</strong><p>可提交补充材料任务，由档案人员协助处理</p></div>
+          <div class="loaded-list" id="loadedList">
+            <div class="result-item"><div class="avatar">王</div><div><strong>王强</strong><span>人员花名册 · 身份证信息完整</span></div><span class="status">可用</span></div>
+            <div class="result-item"><div class="avatar">刘</div><div><strong>刘洋</strong><span>人员花名册 · 身份证信息完整</span></div><span class="status">可用</span></div>
+            <div class="result-item"><div class="avatar">陈</div><div><strong>陈华</strong><span>人员花名册 · 身份证信息完整</span></div><span class="status">可用</span></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="shade" id="taskModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <section class="modal">
+      <header class="modal-head"><div class="modal-title" id="modalTitle">提交补充材料任务</div><button class="icon-btn" id="closeModal" title="关闭"><i data-lucide="x" class="icon"></i></button></header>
+      <div id="formView">
+        <div class="modal-body">
+          <div class="context">
+            <div class="context-cell"><span class="label">名称</span><strong>花名册1</strong></div>
+            <div class="context-cell"><span class="label">投标主体</span><strong>深圳市示例科技有限公司</strong></div>
+            <div class="context-cell"><span class="label">当前查询组</span><strong id="modalGroup">查询组1</strong></div>
+          </div>
+          <div class="section-title">查询条件</div>
+          <div class="condition-preview">
+            <div class="preview-meta">
+              <div><span class="label">档案类型</span><strong id="modalForm">人员花名册</strong></div>
+              <div><span class="label">逻辑关系</span><strong><span class="logic-mark" id="modalLogic">且</span></strong></div>
+            </div>
+            <table class="preview-table"><thead><tr><th>查询字段</th><th>条件值</th></tr></thead><tbody><tr><td id="modalField">有无驾驶证</td><td id="modalValue">无</td></tr></tbody></table>
+          </div>
+          <div class="section-title">补充说明 <span style="color:var(--muted);font-weight:400">（选填）</span></div>
+          <div class="field"><textarea id="requirement" maxlength="500" placeholder="可补充说明所需材料、有效期、附件等要求"></textarea><div class="field-foot"><span><b id="charCount">0</b>/500</span></div></div>
+          <div class="notice"><i data-lucide="info" class="icon"></i><span>确认后将生成一条补充材料任务，并把当前查询条件和补充要求提供给档案系统。</span></div>
+        </div>
+        <footer class="modal-foot"><button class="btn btn-secondary" id="cancelModal" type="button">取消</button><button class="btn btn-primary" id="confirmTask" type="button"><i data-lucide="send" class="icon"></i><span>确认提交</span></button></footer>
+      </div>
+      <div id="successView" hidden>
+        <div class="modal-body success-view">
+          <div class="success-icon"><i data-lucide="check" class="icon"></i></div><h2>补充材料任务已生成</h2><p>任务已提供给档案系统，等待档案人员处理</p>
+          <div class="task-summary"><div><span class="label">任务编号</span><strong id="taskNumber">BCR-20260917-001</strong></div><div><span class="label">任务状态</span><strong style="color:var(--success)">待档案处理</strong></div></div>
+        </div>
+        <footer class="modal-foot"><button class="btn btn-secondary" id="closeSuccess" type="button">关闭</button><button class="btn btn-primary" id="viewTask" type="button"><i data-lucide="external-link" class="icon"></i>查看任务</button></footer>
+      </div>
+    </section>
+  </div>
+  <div class="toast" id="toast"><i data-lucide="circle-check" class="icon"></i><span id="toastText"></span></div>
+
+  <script>
+    const groups = [
+      {name:'查询组1',count:0,form:'人员花名册',logic:'且',field:'有无驾驶证',value:'无'},
+      {name:'查询组2',count:100,form:'人员花名册',logic:'或',field:'有无身份证',value:'有'}
+    ];
+    let current = 0;
+    const submitted = new Set();
+    const $ = id => document.getElementById(id);
+    const modal = $('taskModal');
+
+    function icons(){ if(window.lucide) window.lucide.createIcons(); }
+    function showToast(message){ $('toastText').textContent=message; $('toast').classList.add('show'); clearTimeout(showToast.timer); showToast.timer=setTimeout(()=>$('toast').classList.remove('show'),2200); }
+    function syncResult(){
+      const group=groups[current]; $('resultCount').textContent=group.count; $('selectAll').disabled=group.count===0;
+      $('emptyState').style.display=group.count===0?'block':'none'; $('loadedList').style.display=group.count===0?'none':'block';
+      document.querySelectorAll('.tab').forEach((tab,index)=>tab.classList.toggle('active',index===current));
+      const isSubmitted=submitted.has(current); $('openTask').classList.toggle('submitted',isSubmitted);
+      $('openTask').innerHTML=isSubmitted?'<i data-lucide="circle-check" class="icon"></i><span>任务已提交</span>':'<i data-lucide="clipboard-plus" class="icon"></i><span>提交补充材料任务</span>'; icons();
+    }
+    function openModal(){
+      if(submitted.has(current)){ showToast(`当前查询组已有待处理任务：BCR-20260917-00${current+1}`); return; }
+      const group=groups[current]; $('modalGroup').textContent=group.name; $('modalForm').textContent=group.form; $('modalLogic').textContent=group.logic; $('modalField').textContent=group.field; $('modalValue').textContent=group.value;
+      $('requirement').value=''; $('charCount').textContent='0'; $('formView').hidden=false; $('successView').hidden=true; modal.classList.add('show'); $('requirement').focus();
+    }
+    function closeModal(){ modal.classList.remove('show'); }
+    document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{current=Number(tab.dataset.index);syncResult();}));
+    $('openTask').addEventListener('click',openModal); $('closeModal').addEventListener('click',closeModal); $('cancelModal').addEventListener('click',closeModal); $('closeSuccess').addEventListener('click',closeModal);
+    modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});
+    document.addEventListener('keydown',event=>{if(event.key==='Escape'&&modal.classList.contains('show'))closeModal();});
+    $('requirement').addEventListener('input',event=>$('charCount').textContent=event.target.value.length);
+    $('confirmTask').addEventListener('click',()=>{
+      const button=$('confirmTask'); button.disabled=true; button.innerHTML='<i data-lucide="loader-circle" class="icon"></i><span>正在提交</span>'; icons();
+      setTimeout(()=>{submitted.add(current);$('taskNumber').textContent=`BCR-20260917-00${current+1}`;$('formView').hidden=true;$('successView').hidden=false;button.disabled=false;button.innerHTML='<i data-lucide="send" class="icon"></i><span>确认提交</span>';syncResult();showToast('任务已提供给档案系统');},800);
+    });
+    $('viewTask').addEventListener('click',()=>showToast('已打开补充任务详情'));
+    $('searchNow').addEventListener('click',()=>showToast('已按当前查询条件完成检索'));
+    $('smartMatch').addEventListener('click',()=>showToast('已匹配可用查询字段'));
+    document.querySelectorAll('.view-btn').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.view-btn').forEach(item=>item.classList.remove('active'));button.classList.add('active');}));
+    icons(); syncResult();
+  </script>
+</body>
+</html>
