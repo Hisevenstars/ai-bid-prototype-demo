@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">材料待补充</title>
+  <desc id="desc">已发起材料补充任务，等待补充完成</desc>
+  <path d="M4.25 2.75h6l3.5 3.5v3.1" stroke="#D92D20" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10.25 2.75v3.5h3.5M9.1 16.75H5.25a1 1 0 0 1-1-1v-12a1 1 0 0 1 1-1" stroke="#D92D20" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="13.25" cy="13.25" r="4" fill="#FFF0EE" stroke="#D92D20" stroke-width="1.5"/>
+  <path d="M13.25 11.15v2.35l1.55.9" stroke="#D92D20" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
