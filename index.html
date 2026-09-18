@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI写标基础建设 - 原型演示</title>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <style>
+    :root {
+      --shell: #f4f6f8;
+      --surface: #ffffff;
+      --text: #20252b;
+      --muted: #6c7580;
+      --line: #e1e5ea;
+      --primary: #1677ff;
+      --primary-soft: #eaf3ff;
+      --sidebar-width: 244px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body {
+      color: var(--text);
+      background: var(--shell);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      font-size: 14px;
+      letter-spacing: 0;
+    }
+    button { font: inherit; }
+    .icon { width: 18px; height: 18px; flex: none; }
+
+    .app { height: 100%; display: grid; grid-template-rows: 56px minmax(0, 1fr); }
+    .topbar {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 16px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 6px;
+      color: #fff;
+      background: var(--primary);
+    }
+    .brand strong { font-size: 16px; white-space: nowrap; }
+    .divider { width: 1px; height: 24px; background: var(--line); }
+    .current-title {
+      min-width: 0;
+      overflow: hidden;
+      color: #3d4650;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .top-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+    .icon-button {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid transparent;
+      border-radius: 5px;
+      color: #525d68;
+      background: transparent;
+      cursor: pointer;
+    }
+    .icon-button:hover { border-color: var(--line); background: #f7f8fa; }
+    .icon-button:focus-visible, .nav-item:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+    .workspace { min-height: 0; display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); }
+    .sidebar {
+      min-height: 0;
+      padding: 18px 12px;
+      overflow: auto;
+      border-right: 1px solid var(--line);
+      background: #fbfcfd;
+    }
+    .group + .group { margin-top: 22px; }
+    .group-title {
+      margin: 0 10px 7px;
+      color: #8a929c;
+      font-size: 12px;
+      font-weight: 650;
+    }
+    .nav-list { display: grid; gap: 3px; }
+    .nav-item {
+      width: 100%;
+      min-height: 42px;
+      padding: 8px 10px;
+      display: grid;
+      grid-template-columns: 26px minmax(0, 1fr);
+      align-items: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 5px;
+      color: #414a54;
+      background: transparent;
+      text-align: left;
+      cursor: pointer;
+    }
+    .nav-item:hover { background: #f0f2f5; }
+    .nav-item.active { color: var(--primary); background: var(--primary-soft); font-weight: 650; }
+    .step {
+      width: 24px;
+      height: 24px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #d5dae0;
+      border-radius: 4px;
+      color: #7b848e;
+      background: #fff;
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+    .nav-item.active .step { border-color: var(--primary); color: #fff; background: var(--primary); }
+    .nav-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .stage { position: relative; min-width: 0; min-height: 0; background: #dfe3e8; }
+    .prototype-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #fff; }
+
+    .app.sidebar-collapsed { grid-template-rows: 56px minmax(0, 1fr); }
+    .app.sidebar-collapsed .workspace { grid-template-columns: 0 minmax(0, 1fr); }
+    .app.sidebar-collapsed .sidebar { padding: 0; border: 0; overflow: hidden; }
+
+    @media (max-width: 760px) {
+      html, body { overflow: auto; }
+      .app { min-width: 320px; grid-template-rows: 52px minmax(0, 1fr); }
+      .topbar { padding: 0 10px; gap: 9px; }
+      .brand strong { font-size: 14px; }
+      .divider { display: none; }
+      .current-title { font-size: 12px; }
+      .workspace { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr); }
+      .sidebar {
+        padding: 8px;
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+      .group, .group + .group { margin: 0; display: flex; gap: 5px; }
+      .group-title { display: none; }
+      .nav-list { display: flex; gap: 5px; }
+      .nav-item { width: auto; min-width: max-content; min-height: 38px; padding: 7px 10px; grid-template-columns: 22px auto; }
+      .step { width: 21px; height: 21px; }
+      .stage { min-height: 0; }
+      .app.sidebar-collapsed .workspace { grid-template-columns: 1fr; grid-template-rows: 0 minmax(0, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <main class="app" id="app">
+    <header class="topbar">
+      <button class="icon-button" id="toggleSidebar" type="button" title="收起原型目录" aria-label="收起原型目录">
+        <i data-lucide="panel-left-close" class="icon"></i>
+      </button>
+      <div class="brand">
+        <span class="brand-mark"><i data-lucide="presentation" class="icon"></i></span>
+        <strong>AI写标原型演示</strong>
+      </div>
+      <span class="divider"></span>
+      <span class="current-title" id="currentTitle"></span>
+      <div class="top-actions">
+        <button class="icon-button" id="reloadPrototype" type="button" title="重新加载当前原型" aria-label="重新加载当前原型">
+          <i data-lucide="rotate-cw" class="icon"></i>
+        </button>
+        <button class="icon-button" id="openPrototype" type="button" title="独立打开当前原型" aria-label="独立打开当前原型">
+          <i data-lucide="external-link" class="icon"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="workspace">
+      <aside class="sidebar" aria-label="原型目录">
+        <section class="group">
+          <h2 class="group-title">业务流程</h2>
+          <nav class="nav-list">
+            <button class="nav-item active" type="button" data-id="launch"><span class="step">01</span><span class="nav-label">发起补充材料任务</span></button>
+            <button class="nav-item" type="button" data-id="archive-task"><span class="step">02</span><span class="nav-label">补充档案工作台</span></button>
+            <button class="nav-item" type="button" data-id="bid-task"><span class="step">03</span><span class="nav-label">投标任务与执行进度</span></button>
+            <button class="nav-item" type="button" data-id="material-status"><span class="step">04</span><span class="nav-label">检索页材料状态</span></button>
+          </nav>
+        </section>
+        <section class="group">
+          <h2 class="group-title">系统配置</h2>
+          <nav class="nav-list">
+            <button class="nav-item" type="button" data-id="reviewer"><span class="step">05</span><span class="nav-label">审核人配置</span></button>
+            <button class="nav-item" type="button" data-id="owner"><span class="step">06</span><span class="nav-label">档案负责人配置</span></button>
+          </nav>
+        </section>
+      </aside>
+
+      <section class="stage" id="stage" aria-live="polite">
+        <iframe class="prototype-frame" id="prototypeFrame" data-id="launch" src="查询组提交补充材料任务原型.html" title="发起补充材料任务"></iframe>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const app = document.getElementById('app');
+    const title = document.getElementById('currentTitle');
+    const navItems = [...document.querySelectorAll('.nav-item')];
+    const frame = document.getElementById('prototypeFrame');
+    const toggleButton = document.getElementById('toggleSidebar');
+    const prototypes = {
+      launch: { title: '发起补充材料任务', src: '查询组提交补充材料任务原型.html' },
+      'archive-task': { title: '补充档案工作台', src: '补充档案任务原型.html' },
+      'bid-task': { title: '投标任务与执行进度', src: '智能写标补充材料任务原型.html' },
+      'material-status': { title: '检索页材料状态', src: 'AI写标详情材料状态原型.html' },
+      reviewer: { title: '审核人配置', src: '公司人员配置原型.html' },
+      owner: { title: '档案负责人配置', src: '档案负责人配置原型.html' }
+    };
+
+    function refreshIcons() {
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function selectPrototype(id, updateHash = true) {
+      const navItem = navItems.find(item => item.dataset.id === id) || navItems[0];
+      const selected = prototypes[navItem.dataset.id];
+      navItems.forEach(item => item.classList.toggle('active', item === navItem));
+      if (frame.dataset.id !== navItem.dataset.id) {
+        frame.dataset.id = navItem.dataset.id;
+        frame.src = selected.src;
+        frame.title = selected.title;
+      }
+      title.textContent = selected.title;
+      if (updateHash) history.replaceState(null, '', `#${navItem.dataset.id}`);
+    }
+
+    navItems.forEach(item => item.addEventListener('click', () => selectPrototype(item.dataset.id)));
+
+    toggleButton.addEventListener('click', () => {
+      const collapsed = app.classList.toggle('sidebar-collapsed');
+      toggleButton.title = collapsed ? '展开原型目录' : '收起原型目录';
+      toggleButton.setAttribute('aria-label', toggleButton.title);
+      toggleButton.innerHTML = `<i data-lucide="${collapsed ? 'panel-left-open' : 'panel-left-close'}" class="icon"></i>`;
+      refreshIcons();
+    });
+
+    document.getElementById('reloadPrototype').addEventListener('click', () => {
+      frame.src = frame.src;
+    });
+
+    document.getElementById('openPrototype').addEventListener('click', () => {
+      window.open(frame.getAttribute('src'), '_blank', 'noopener');
+    });
+
+    selectPrototype(location.hash.slice(1) || 'launch', false);
+    refreshIcons();
+  </script>
+</body>
+</html>
