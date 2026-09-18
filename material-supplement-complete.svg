@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" role="img" aria-labelledby="title desc">
+  <title id="title">材料补充完成</title>
+  <desc id="desc">材料补充任务已完成</desc>
+  <path d="M4.25 2.75h6l3.5 3.5v3.1" stroke="#52C41A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M10.25 2.75v3.5h3.5M9.1 16.75H5.25a1 1 0 0 1-1-1v-12a1 1 0 0 1 1-1" stroke="#52C41A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="13.25" cy="13.25" r="4" fill="#F0F9EB" stroke="#52C41A" stroke-width="1.5"/>
+  <path d="m11.45 13.25 1.2 1.2 2.4-2.55" stroke="#52C41A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
