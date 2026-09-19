@@ -150,7 +150,9 @@
     .result-count { margin-left: 10px; color: var(--muted); font-size: 13px; font-weight: 400; }
     .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--radius); }
     table { width: 100%; border-collapse: collapse; }
-    .main-table { min-width: 1928px; table-layout: fixed; }
+    .main-table { min-width: 1296px; table-layout: fixed; font-size: 12px; }
+    .main-table th, .main-table td { padding: 10px 8px; }
+    .main-table .status { min-height: 22px; padding: 2px 5px; font-size: 11px; }
     th, td { border-bottom: 1px solid var(--line); padding: 15px 14px; text-align: left; vertical-align: middle; overflow-wrap: anywhere; }
     th { background: #fafafa; color: #31363b; font-weight: 650; white-space: nowrap; }
     tbody tr:last-child td { border-bottom: 0; }
@@ -268,7 +270,8 @@
     .summary-value { font-size: 22px; line-height: 1.2; font-weight: 700; }
     .detail-panel { margin-top: 20px; overflow: hidden; }
     .detail-toolbar { display: flex; align-items: center; justify-content: space-between; min-height: 62px; padding: 0 22px; border-bottom: 1px solid var(--line); }
-    .detail-table { table-layout: fixed; min-width: 2100px; }
+    .detail-table { width: 100%; min-width: 1308px; table-layout: fixed; font-size: 12px; }
+    .detail-table th, .detail-table td { padding: 10px 8px; }
     .cell-muted { color: #90969c; }
     .operation-actions { display: flex; align-items: center; gap: 12px; white-space: nowrap; }
 
@@ -290,7 +293,7 @@
     .modal-title { font-size: 17px; font-weight: 700; }
     .modal-body { padding: 20px; }
     .modal-foot { min-height: 62px; padding: 12px 20px; border-top: 1px solid var(--line); display: flex; justify-content: flex-end; align-items: center; }
-    .task-context { display: grid; grid-template-columns: 1.25fr 1.25fr 1fr .85fr; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+    .task-context { display: grid; grid-template-columns: 1.1fr 1.25fr 1.25fr 1fr .85fr; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
     .task-context-cell { min-width: 0; padding: 12px 14px; background: #fafbfc; border-right: 1px solid var(--line); }
     .task-context-cell:last-child { border-right: 0; }
     .task-field-label { display: block; color: var(--muted); font-size: 12px; margin-bottom: 4px; }
@@ -446,7 +449,7 @@
         <div id="mainTableWrap" class="table-scroll">
           <table class="main-table">
             <colgroup>
-              <col style="width:48px"><col style="width:150px"><col style="width:200px"><col style="width:130px"><col style="width:100px"><col style="width:100px"><col style="width:210px"><col style="width:100px"><col style="width:130px"><col style="width:130px"><col style="width:125px"><col style="width:170px"><col style="width:180px"><col style="width:155px">
+              <col style="width:34px"><col style="width:96px"><col style="width:130px"><col style="width:80px"><col style="width:72px"><col style="width:78px"><col style="width:130px"><col style="width:68px"><col style="width:88px"><col style="width:88px"><col style="width:82px"><col style="width:108px"><col style="width:118px"><col style="width:124px">
             </colgroup>
             <thead>
               <tr>
@@ -482,9 +485,9 @@
         <div class="table-scroll" style="border:0;border-radius:0">
           <table class="detail-table">
             <colgroup>
-              <col style="width:160px"><col style="width:270px"><col style="width:300px"><col style="width:300px"><col style="width:110px"><col style="width:100px"><col style="width:155px"><col style="width:100px"><col style="width:155px"><col style="width:100px"><col style="width:155px"><col style="width:120px">
+              <col style="width:120px"><col style="width:110px"><col style="width:180px"><col style="width:180px"><col style="width:84px"><col style="width:72px"><col style="width:110px"><col style="width:72px"><col style="width:110px"><col style="width:72px"><col style="width:110px"><col style="width:88px">
             </colgroup>
-            <thead><tr><th>模块名称</th><th>查询条件</th><th>补充说明</th><th>无需补充说明</th><th>任务状态</th><th>发起人</th><th>发起时间</th><th>审核人</th><th>审核时间</th><th>补充人</th><th>补充时间</th><th>操作</th></tr></thead>
+            <thead><tr><th>目录标题</th><th>模块名称</th><th>补充说明</th><th>无需补充说明</th><th>任务状态</th><th>发起人</th><th>发起时间</th><th>审核人</th><th>审核时间</th><th>补充人</th><th>补充时间</th><th>操作</th></tr></thead>
             <tbody id="detailTableBody"></tbody>
           </table>
         </div>
@@ -537,19 +540,19 @@
 
   <script>
     const moduleTemplates = [
-      { name: '人员花名册', conditions: [['投标主体', '当前公司'], ['人员状态', '在职']], note: '补充最新人员花名册，包含姓名、岗位及入职日期。', noSupplementNote: '招标文件未要求提供人员花名册。', attachments: [{ name: '人员花名册_2026年09月.xlsx', type: 'XLSX', size: '28 KB', note: '人员花名册附件预览' }] },
-      { name: '社保缴纳证明', conditions: [['缴纳主体', '当前公司'], ['缴纳月份', '近 3 个月']], note: '补充近三个月社保缴纳证明，需包含参保人员明细。', noSupplementNote: '招标文件未要求提供社保缴纳证明。', attachments: [{ name: '近三个月社保缴纳证明.pdf', type: 'PDF', size: '1.2 MB', note: '社保缴纳证明附件预览' }] },
-      { name: '车辆（自有、租赁）', conditions: [['车辆类型', '自有、租赁'], ['车辆状态', '有效']], note: '补充车辆行驶证；租赁车辆同时补充有效租赁合同。', noSupplementNote: '招标文件未要求提供车辆证明材料。', attachments: [{ name: '车辆行驶证及租赁合同.zip', type: 'ZIP', size: '3.6 MB', note: '车辆证明材料附件预览' }] },
-      { name: '分子公司基本证件', conditions: [['企业关系', '分公司、子公司'], ['证照状态', '有效']], note: '补充营业执照及与投标主体的关系证明。', noSupplementNote: '招标文件未要求提供分子公司基本证件。', attachments: [{ name: '分子公司基本证件.pdf', type: 'PDF', size: '860 KB', note: '分子公司基本证件附件预览' }] },
-      { name: '党建', conditions: [['资料类型', '党建'], ['资料年度', '2025—2026']], note: '补充党组织建设、活动记录等有效证明材料。', noSupplementNote: '招标文件未涉及党建材料要求。', attachments: [] },
-      { name: '知识产权', conditions: [['权利人', '当前公司'], ['权利状态', '有效']], note: '补充有效期内的商标、专利或软件著作权证明。', noSupplementNote: '招标文件未涉及知识产权材料要求。', attachments: [{ name: '知识产权证明材料.pdf', type: 'PDF', size: '2.1 MB', note: '知识产权证明材料附件预览' }] }
+      { name: '人员花名册', directoryTitle: '人员配置', conditions: [['投标主体', '当前公司'], ['人员状态', '在职']], note: '补充最新人员花名册，包含姓名、岗位及入职日期。', noSupplementNote: '招标文件未要求提供人员花名册。', attachments: [{ name: '人员花名册_2026年09月.xlsx', type: 'XLSX', size: '28 KB', note: '人员花名册附件预览' }] },
+      { name: '社保缴纳证明', directoryTitle: '社会保险缴纳证明', conditions: [['缴纳主体', '当前公司'], ['缴纳月份', '近 3 个月']], note: '补充近三个月社保缴纳证明，需包含参保人员明细。', noSupplementNote: '招标文件未要求提供社保缴纳证明。', attachments: [{ name: '近三个月社保缴纳证明.pdf', type: 'PDF', size: '1.2 MB', note: '社保缴纳证明附件预览' }] },
+      { name: '车辆（自有、租赁）', directoryTitle: '车辆证明材料', conditions: [['车辆类型', '自有、租赁'], ['车辆状态', '有效']], note: '补充车辆行驶证；租赁车辆同时补充有效租赁合同。', noSupplementNote: '招标文件未要求提供车辆证明材料。', attachments: [{ name: '车辆行驶证及租赁合同.zip', type: 'ZIP', size: '3.6 MB', note: '车辆证明材料附件预览' }] },
+      { name: '分子公司基本证件', directoryTitle: '分子公司证照', conditions: [['企业关系', '分公司、子公司'], ['证照状态', '有效']], note: '补充营业执照及与投标主体的关系证明。', noSupplementNote: '招标文件未要求提供分子公司基本证件。', attachments: [{ name: '分子公司基本证件.pdf', type: 'PDF', size: '860 KB', note: '分子公司基本证件附件预览' }] },
+      { name: '党建', directoryTitle: '党建材料', conditions: [['资料类型', '党建'], ['资料年度', '2025—2026']], note: '补充党组织建设、活动记录等有效证明材料。', noSupplementNote: '招标文件未涉及党建材料要求。', attachments: [] },
+      { name: '知识产权', directoryTitle: '知识产权证明', conditions: [['权利人', '当前公司'], ['权利状态', '有效']], note: '补充有效期内的商标、专利或软件著作权证明。', noSupplementNote: '招标文件未涉及知识产权材料要求。', attachments: [{ name: '知识产权证明材料.pdf', type: 'PDF', size: '2.1 MB', note: '知识产权证明材料附件预览' }] }
     ];
 
     function buildDetails(statuses, date, initiator = '李玉春') {
       return moduleTemplates.map((item, index) => {
         const status = statuses[index];
-        const reviewed = status === '已补充' || status === '无需补充';
-        const supplied = status === '已补充';
+        const reviewed = status === '已完成' || status === '无需补充';
+        const supplied = status === '已完成';
         return {
           ...item,
           status,
@@ -613,13 +616,13 @@
         number: 'TB260916000004', name: '中央党校项目智慧餐饮服务', province: '北京市北京市', industry: '教育', businessType: '日配',
         bidder: '2115/永辉彩食鲜供应链管理有限公司', analysis: '人工复核完成', catalog: '目录输出完成', writing: '标书输出中', createdAt: '2026-09-16 18:15:24',
         process: processSamples.writing,
-        details: buildDetails(['已补充', '待处理', '已补充', '待处理', '无需补充', '无需补充'], '2026-09-16')
+        details: buildDetails(['已完成', '待处理', '已完成', '待处理', '无需补充', '已取消'], '2026-09-16')
       },
       {
         number: 'TB260916000001', name: '人员服务项目', province: '北京市北京市', industry: '政府', businessType: '日配',
         bidder: '2115/北京永辉彩食鲜供应链管理有限公司', analysis: '人工复核完成', catalog: '目录输出完成', writing: '标书输出完成待审核', createdAt: '2026-09-16 10:06:57',
         process: processSamples.review,
-        details: buildDetails(['已补充', '已补充', '无需补充', '已补充', '无需补充', '已取消'], '2026-09-16')
+        details: buildDetails(['已完成', '已完成', '无需补充', '已完成', '无需补充', '已取消'], '2026-09-16')
       },
       {
         number: 'TB260915000003', name: '机关食堂原材料采购', province: '北京市北京市', industry: '政府', businessType: '-',
@@ -655,7 +658,7 @@
     function getSummary(details) {
       const active = details.filter(item => item.status !== '无需补充');
       const pending = details.filter(item => item.status === '待处理').length;
-      const supplied = details.filter(item => item.status === '已补充').length;
+      const supplied = details.filter(item => item.status === '已完成').length;
       const notRequired = details.filter(item => item.status === '无需补充').length;
       const cancelled = details.filter(item => item.status === '已取消').length;
       let overall = '全部完成';
@@ -665,7 +668,7 @@
     }
 
     function statusClass(status) {
-      return status === '全部完成' || status === '已补充' ? 'complete' : status === '部分完成' ? 'partial' : status === '待处理' ? 'pending' : status === '已取消' ? 'cancelled' : 'none';
+      return status === '全部完成' || status === '已完成' ? 'complete' : status === '部分完成' ? 'partial' : status === '待处理' ? 'pending' : status === '已取消' ? 'cancelled' : 'none';
     }
 
     function statusTag(status) {
@@ -787,13 +790,13 @@
       document.getElementById('summaryStrip').innerHTML = `
         <div class="summary-item"><div class="summary-label">全部</div><div class="summary-value">${summary.total}</div></div>
         <div class="summary-item"><div class="summary-label">待处理</div><div class="summary-value" style="color:var(--danger)">${summary.pending}</div></div>
-        <div class="summary-item"><div class="summary-label">已补充</div><div class="summary-value" style="color:var(--success)">${summary.supplied}</div></div>
+        <div class="summary-item"><div class="summary-label">已完成</div><div class="summary-value" style="color:var(--success)">${summary.supplied}</div></div>
         <div class="summary-item"><div class="summary-label">无需补充</div><div class="summary-value">${summary.notRequired}</div></div>
         <div class="summary-item"><div class="summary-label">已取消</div><div class="summary-value">${summary.cancelled}</div></div>`;
       currentDetailTask = task;
       detailTableBody.innerHTML = task.details.map((item, index) => `<tr>
+        <td><strong>${item.directoryTitle}</strong></td>
         <td><strong>${item.name}</strong></td>
-        <td>${item.query}</td>
         <td class="${item.status === '无需补充' ? 'cell-muted' : ''}">${item.status === '无需补充' ? '—' : item.note}</td>
         <td class="${item.status === '无需补充' ? '' : 'cell-muted'}">${item.status === '无需补充' ? item.noSupplementNote : '—'}</td>
         <td>${statusTag(item.status)}</td>
@@ -819,6 +822,7 @@
       const conditionRows = item.conditions.map(condition => `<tr><td>${condition[0]}</td><td>${condition[1]}</td></tr>`).join('');
       document.getElementById('taskDetailModalBody').innerHTML = `
         <div class="task-context">
+          <div class="task-context-cell"><span class="task-field-label">目录标题</span><strong>${item.directoryTitle}</strong></div>
           <div class="task-context-cell"><span class="task-field-label">名称</span><strong>${item.name}</strong></div>
           <div class="task-context-cell"><span class="task-field-label">投标主体</span><strong>${currentDetailTask.bidder}</strong></div>
           <div class="task-context-cell"><span class="task-field-label">当前查询组</span><strong>${item.queryGroup}</strong></div>
