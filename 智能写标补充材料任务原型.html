@@ -306,6 +306,22 @@
     .task-preview-table tr:last-child td { border-bottom: 0; }
     .task-preview-table th { color: var(--muted); font-size: 12px; font-weight: 500; background: #fcfcfd; }
     .readonly-box { min-height: 70px; padding: 11px 13px; border: 1px solid #cfd5dd; border-radius: 6px; background: #fff; color: var(--text); overflow-wrap: anywhere; }
+    .attachment-list { display: grid; gap: 8px; }
+    .attachment-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 13px; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+    .attachment-main { display: flex; align-items: center; gap: 9px; min-width: 0; }
+    .attachment-icon { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 5px; color: var(--primary); background: var(--primary-soft); }
+    .attachment-icon .icon { width: 16px; height: 16px; }
+    .attachment-text { min-width: 0; }
+    .attachment-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; }
+    .attachment-meta { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; }
+    .attachment-empty { padding: 14px; border: 1px dashed var(--line-strong); border-radius: 6px; color: var(--muted); text-align: center; background: #fafbfc; }
+    .attachment-preview-modal { width: min(680px, 100%); z-index: 120; }
+    .attachment-preview { min-height: 260px; border: 1px solid var(--line); border-radius: 6px; background: #fafbfc; padding: 24px; }
+    .attachment-preview-file { display: grid; place-items: center; gap: 11px; min-height: 210px; text-align: center; color: var(--muted); }
+    .attachment-preview-file .preview-file-icon { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 8px; color: var(--primary); background: var(--primary-soft); }
+    .attachment-preview-file .preview-file-icon .icon { width: 26px; height: 26px; }
+    .attachment-preview-title { color: var(--text); font-weight: 650; overflow-wrap: anywhere; }
+    .attachment-preview-note { font-size: 13px; }
     .record-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
     .record-item { min-width: 0; padding: 11px 13px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); }
     .record-item:nth-child(2n) { border-right: 0; }
@@ -374,6 +390,7 @@
       .task-context, .task-preview-meta, .record-grid { grid-template-columns: 1fr; }
       .task-context-cell, .task-preview-meta > div, .record-item { border-right: 0; border-bottom: 1px solid var(--line); }
       .task-context-cell:last-child, .task-preview-meta > div:last-child, .record-item:last-child { border-bottom: 0; }
+      .attachment-item { align-items: flex-start; flex-direction: column; }
     }
   </style>
 </head>
@@ -486,6 +503,25 @@
     </div>
   </div>
 
+  <div id="attachmentPreviewModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="attachmentPreviewTitle">
+    <div class="modal attachment-preview-modal">
+      <div class="modal-head">
+        <div id="attachmentPreviewTitle" class="modal-title">附件预览</div>
+        <button id="closeAttachmentPreview" class="icon-button" type="button" title="关闭" aria-label="关闭附件预览"><i data-lucide="x" class="icon"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="attachment-preview">
+          <div class="attachment-preview-file">
+            <span class="preview-file-icon"><i data-lucide="file-text" class="icon"></i></span>
+            <strong id="attachmentPreviewFileName" class="attachment-preview-title"></strong>
+            <span id="attachmentPreviewNote" class="attachment-preview-note"></span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot"><button id="confirmAttachmentPreview" class="btn btn-primary" type="button">关闭</button></div>
+    </div>
+  </div>
+
   <div id="cancelTaskModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="cancelTaskModalTitle">
     <div class="modal confirm-modal">
       <div class="modal-head">
@@ -501,12 +537,12 @@
 
   <script>
     const moduleTemplates = [
-      { name: '人员花名册', conditions: [['投标主体', '当前公司'], ['人员状态', '在职']], note: '补充最新人员花名册，包含姓名、岗位及入职日期。', noSupplementNote: '招标文件未要求提供人员花名册。' },
-      { name: '社保缴纳证明', conditions: [['缴纳主体', '当前公司'], ['缴纳月份', '近 3 个月']], note: '补充近三个月社保缴纳证明，需包含参保人员明细。', noSupplementNote: '招标文件未要求提供社保缴纳证明。' },
-      { name: '车辆（自有、租赁）', conditions: [['车辆类型', '自有、租赁'], ['车辆状态', '有效']], note: '补充车辆行驶证；租赁车辆同时补充有效租赁合同。', noSupplementNote: '招标文件未要求提供车辆证明材料。' },
-      { name: '分子公司基本证件', conditions: [['企业关系', '分公司、子公司'], ['证照状态', '有效']], note: '补充营业执照及与投标主体的关系证明。', noSupplementNote: '招标文件未要求提供分子公司基本证件。' },
-      { name: '党建', conditions: [['资料类型', '党建'], ['资料年度', '2025—2026']], note: '补充党组织建设、活动记录等有效证明材料。', noSupplementNote: '招标文件未涉及党建材料要求。' },
-      { name: '知识产权', conditions: [['权利人', '当前公司'], ['权利状态', '有效']], note: '补充有效期内的商标、专利或软件著作权证明。', noSupplementNote: '招标文件未涉及知识产权材料要求。' }
+      { name: '人员花名册', conditions: [['投标主体', '当前公司'], ['人员状态', '在职']], note: '补充最新人员花名册，包含姓名、岗位及入职日期。', noSupplementNote: '招标文件未要求提供人员花名册。', attachments: [{ name: '人员花名册_2026年09月.xlsx', type: 'XLSX', size: '28 KB', note: '人员花名册附件预览' }] },
+      { name: '社保缴纳证明', conditions: [['缴纳主体', '当前公司'], ['缴纳月份', '近 3 个月']], note: '补充近三个月社保缴纳证明，需包含参保人员明细。', noSupplementNote: '招标文件未要求提供社保缴纳证明。', attachments: [{ name: '近三个月社保缴纳证明.pdf', type: 'PDF', size: '1.2 MB', note: '社保缴纳证明附件预览' }] },
+      { name: '车辆（自有、租赁）', conditions: [['车辆类型', '自有、租赁'], ['车辆状态', '有效']], note: '补充车辆行驶证；租赁车辆同时补充有效租赁合同。', noSupplementNote: '招标文件未要求提供车辆证明材料。', attachments: [{ name: '车辆行驶证及租赁合同.zip', type: 'ZIP', size: '3.6 MB', note: '车辆证明材料附件预览' }] },
+      { name: '分子公司基本证件', conditions: [['企业关系', '分公司、子公司'], ['证照状态', '有效']], note: '补充营业执照及与投标主体的关系证明。', noSupplementNote: '招标文件未要求提供分子公司基本证件。', attachments: [{ name: '分子公司基本证件.pdf', type: 'PDF', size: '860 KB', note: '分子公司基本证件附件预览' }] },
+      { name: '党建', conditions: [['资料类型', '党建'], ['资料年度', '2025—2026']], note: '补充党组织建设、活动记录等有效证明材料。', noSupplementNote: '招标文件未涉及党建材料要求。', attachments: [] },
+      { name: '知识产权', conditions: [['权利人', '当前公司'], ['权利状态', '有效']], note: '补充有效期内的商标、专利或软件著作权证明。', noSupplementNote: '招标文件未涉及知识产权材料要求。', attachments: [{ name: '知识产权证明材料.pdf', type: 'PDF', size: '2.1 MB', note: '知识产权证明材料附件预览' }] }
     ];
 
     function buildDetails(statuses, date, initiator = '李玉春') {
@@ -525,7 +561,8 @@
           reviewer: reviewed ? (index % 2 ? '刘洋' : '王敏') : '—',
           reviewedAt: reviewed ? `${date} ${String(10 + index).padStart(2, '0')}:15:00` : '—',
           supplementer: supplied ? (index % 2 ? '李敏' : '张伟') : '—',
-          supplementedAt: supplied ? `${date} ${String(11 + index).padStart(2, '0')}:40:00` : '—'
+          supplementedAt: supplied ? `${date} ${String(11 + index).padStart(2, '0')}:40:00` : '—',
+          attachments: supplied ? item.attachments : []
         };
       });
     }
@@ -603,6 +640,7 @@
     const taskTableBody = document.getElementById('taskTableBody');
     const detailTableBody = document.getElementById('detailTableBody');
     const taskDetailModal = document.getElementById('taskDetailModal');
+    const attachmentPreviewModal = document.getElementById('attachmentPreviewModal');
     const cancelTaskModal = document.getElementById('cancelTaskModal');
     const toast = document.getElementById('toast');
     let currentDetailTask = null;
@@ -798,6 +836,12 @@
         <div class="readonly-box">${item.status === '无需补充' ? '—' : item.note}</div>
         <div class="task-section-title">无需补充说明</div>
         <div class="readonly-box">${item.status === '无需补充' ? item.noSupplementNote : '—'}</div>
+        <div class="task-section-title">附件</div>
+        <div class="attachment-list">${item.attachments.length ? item.attachments.map((attachment, attachmentIndex) => `
+          <div class="attachment-item">
+            <div class="attachment-main"><span class="attachment-icon"><i data-lucide="paperclip" class="icon"></i></span><div class="attachment-text"><span class="attachment-name" title="${attachment.name}">${attachment.name}</span><span class="attachment-meta">${attachment.type} · ${attachment.size}</span></div></div>
+            <button class="btn-link attachment-view" type="button" data-detail-index="${index}" data-attachment-index="${attachmentIndex}">查看</button>
+          </div>`).join('') : '<div class="attachment-empty">暂无附件</div>'}</div>
         <div class="task-section-title">处理记录</div>
         <div class="record-grid">
           <div class="record-item"><span class="task-field-label">发起人</span><div class="record-value">${item.initiator}</div></div>
@@ -808,7 +852,25 @@
           <div class="record-item"><span class="task-field-label">补充时间</span><div class="record-value">${item.supplementedAt}</div></div>
         </div>`;
       taskDetailModal.classList.add('open');
+      document.querySelectorAll('.attachment-view').forEach(button => {
+        button.addEventListener('click', () => openAttachmentPreview(Number(button.dataset.detailIndex), Number(button.dataset.attachmentIndex)));
+      });
       renderIcons();
+    }
+
+    function openAttachmentPreview(detailIndex, attachmentIndex) {
+      if (!currentDetailTask || !currentDetailTask.details.length) return;
+      const item = currentDetailTask.details[detailIndex];
+      const attachment = item?.attachments[attachmentIndex];
+      if (!attachment) return;
+      document.getElementById('attachmentPreviewFileName').textContent = attachment.name;
+      document.getElementById('attachmentPreviewNote').textContent = `${attachment.type} · ${attachment.size} · ${attachment.note}`;
+      attachmentPreviewModal.classList.add('open');
+      renderIcons();
+    }
+
+    function closeAttachmentPreview() {
+      attachmentPreviewModal.classList.remove('open');
     }
 
     function closeTaskDetail() {
@@ -883,6 +945,9 @@
     document.getElementById('closeTaskDetailModal').addEventListener('click', closeTaskDetail);
     document.getElementById('confirmTaskDetailModal').addEventListener('click', closeTaskDetail);
     taskDetailModal.addEventListener('click', event => { if (event.target === taskDetailModal) closeTaskDetail(); });
+    document.getElementById('closeAttachmentPreview').addEventListener('click', closeAttachmentPreview);
+    document.getElementById('confirmAttachmentPreview').addEventListener('click', closeAttachmentPreview);
+    attachmentPreviewModal.addEventListener('click', event => { if (event.target === attachmentPreviewModal) closeAttachmentPreview(); });
     document.getElementById('closeCancelTaskModal').addEventListener('click', closeCancelTask);
     document.getElementById('keepTaskButton').addEventListener('click', closeCancelTask);
     document.getElementById('confirmCancelTaskButton').addEventListener('click', confirmCancelTask);
