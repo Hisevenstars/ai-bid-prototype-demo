@@ -61,7 +61,7 @@
 .bid-context-field.project{grid-column:auto}
 .bid-context-field label{color:#8590a1;margin-bottom:6px}
 .bid-context-value{font-weight:500;line-height:22px}
-</style></head>
+</style><style>.material-task-btn{margin-left:12px;flex:none;padding:6px 12px;border:1px solid #91caff;border-radius:4px;background:#fff;color:#1677ff;font:inherit;font-size:12px;cursor:pointer;white-space:nowrap}.material-task-btn:hover{background:#edf5ff}.material-task-btn:disabled{color:#8b95a5;border-color:#e1e5eb;cursor:default}.result-item{flex-wrap:wrap}</style></head>
 <body>
   <div class="app">
     <header class="topbar">
@@ -107,7 +107,7 @@
         <div class="result-tools">
           <div class="result-count">当前组检索结果已加载<span id="resultCount">0</span>条</div>
           <div class="toolset">
-            <button class="task-btn" id="openTask" type="button"><i data-lucide="clipboard-plus" class="icon"></i><span>提交补充材料任务</span></button>
+            <button class="task-btn" id="openTask" type="button"><i data-lucide="clipboard-plus" class="icon"></i><span>发起补充档案和材料</span></button>
             <button class="select-all" id="selectAll" type="button" disabled>全选</button>
             <button class="view-btn active" type="button"><i data-lucide="layout-grid" class="icon"></i>卡片</button>
             <button class="view-btn" type="button"><i data-lucide="list" class="icon"></i>列表</button>
@@ -116,9 +116,9 @@
         <div class="result-body">
           <div class="empty" id="emptyState"><div class="empty-visual"><div class="empty-doc"></div><div class="empty-box"></div></div><strong>暂无符合当前条件的材料</strong><p>可提交补充材料任务，由档案人员协助处理</p></div>
           <div class="loaded-list" id="loadedList">
-            <div class="result-item"><div class="avatar">王</div><div><strong>王强</strong><span>人员花名册 · 身份证信息完整</span></div><span class="status">可用</span></div>
-            <div class="result-item"><div class="avatar">刘</div><div><strong>刘洋</strong><span>人员花名册 · 身份证信息完整</span></div><span class="status">可用</span></div>
-            <div class="result-item"><div class="avatar">陈</div><div><strong>陈华</strong><span>人员花名册 · 身份证信息完整</span></div><span class="status">可用</span></div>
+            <div class="result-item"><div class="avatar">王</div><div><strong>王强</strong><span>人员花名册 · 身份证信息完整</span></div><span class="status">可用</span><button class="material-task-btn" type="button" data-material="0">发起补充材料</button></div>
+            <div class="result-item"><div class="avatar">刘</div><div><strong>刘洋</strong><span>人员花名册 · 身份证信息完整</span></div><span class="status">可用</span><button class="material-task-btn" type="button" data-material="1">发起补充材料</button></div>
+            <div class="result-item"><div class="avatar">陈</div><div><strong>陈华</strong><span>人员花名册 · 身份证信息完整</span></div><span class="status">可用</span><button class="material-task-btn" type="button" data-material="2">发起补充材料</button></div>
           </div>
         </div>
       </section>
@@ -131,7 +131,7 @@
       <div id="formView">
         <div class="modal-body">
           <div class="context">
-            <div class="context-cell"><span class="label">名称</span><strong>花名册1</strong></div>
+            <div class="context-cell"><span class="label">名称</span><strong id="taskContextName">花名册1</strong></div>
             <div class="context-cell"><span class="label">投标主体</span><strong>永辉彩食鲜供应链管理有限公司</strong></div>
             <div class="context-cell"><span class="label">当前查询组</span><strong id="modalGroup">查询组1</strong></div>
           </div>
@@ -174,6 +174,9 @@
     ];
     let current = 0;
     let attachments = [];
+    let activeMaterial = null;
+    const materials=['王强','刘洋','陈华'];
+    const submissionKey=()=>activeMaterial===null?'group:'+current:'material:'+current+':'+activeMaterial;
     const submitted = new Set();
     const $ = id => document.getElementById(id);
     const modal = $('taskModal');
@@ -192,18 +195,20 @@
       const group=groups[current]; $('resultCount').textContent=group.count; $('selectAll').disabled=group.count===0;
       $('emptyState').style.display=group.count===0?'block':'none'; $('loadedList').style.display=group.count===0?'none':'block';
       document.querySelectorAll('.tab').forEach((tab,index)=>tab.classList.toggle('active',index===current));
-      const isSubmitted=submitted.has(current); $('openTask').classList.toggle('submitted',isSubmitted);
-      $('openTask').innerHTML=isSubmitted?'<i data-lucide="circle-check" class="icon"></i><span>任务已提交</span>':'<i data-lucide="clipboard-plus" class="icon"></i><span>提交补充材料任务</span>'; icons();
+      const isSubmitted=submitted.has('group:'+current); $('openTask').classList.toggle('submitted',isSubmitted);
+      $('openTask').innerHTML=isSubmitted?'<i data-lucide="circle-check" class="icon"></i><span>任务已提交</span>':'<i data-lucide="clipboard-plus" class="icon"></i><span>发起补充档案和材料</span>'; icons();
     }
-    function openModal(){
+    function openModal(materialIndex=null){
+      activeMaterial=materialIndex;
       $('launchBidContext').innerHTML=BidContext.html({},true); $('attachmentError').hidden=true;
-      if(submitted.has(current)){ showToast(`当前查询组已有待处理任务：BCR-20260917-00${current+1}`); return; }
-      const group=groups[current]; $('modalGroup').textContent=group.name; $('modalForm').textContent=group.form; $('modalLogic').textContent=group.logic; $('modalField').textContent=group.field; $('modalValue').textContent=group.value;
+      if(submitted.has(submissionKey())){ showToast(`当前查询组已有待处理任务：BCR-20260917-00${current+1}`); return; }
+      $('modalTitle').textContent=activeMaterial===null?'发起补充档案和材料':'发起补充材料';$('taskContextName').textContent=activeMaterial===null?'花名册1':materials[activeMaterial]+' · 人员花名册';
+      const group=groups[current]; $('modalGroup').textContent=group.name; $('modalForm').textContent=group.form; $('modalLogic').textContent=group.logic; $('modalField').textContent=group.field; $('modalValue').textContent=group.value; if(activeMaterial!==null){$('modalField').textContent='人员';$('modalValue').textContent=materials[activeMaterial];}
       $('requirement').value=''; $('requirement').classList.remove('error'); $('requirementError').hidden=true; $('charCount').textContent='0'; attachments=[]; $('attachmentInput').value=''; renderAttachments(); $('formView').hidden=false; $('successView').hidden=true; modal.classList.add('show'); $('requirement').focus();
     }
     function closeModal(){ modal.classList.remove('show'); }
     document.querySelectorAll('.tab').forEach(tab=>tab.addEventListener('click',()=>{current=Number(tab.dataset.index);syncResult();}));
-    $('openTask').addEventListener('click',openModal); $('closeModal').addEventListener('click',closeModal); $('cancelModal').addEventListener('click',closeModal); $('closeSuccess').addEventListener('click',closeModal);
+    $('openTask').addEventListener('click',()=>openModal());document.querySelectorAll('[data-material]').forEach(button=>button.addEventListener('click',()=>openModal(Number(button.dataset.material)))); $('closeModal').addEventListener('click',closeModal); $('cancelModal').addEventListener('click',closeModal); $('closeSuccess').addEventListener('click',closeModal);
     modal.addEventListener('click',event=>{if(event.target===modal)closeModal();});
     document.addEventListener('keydown',event=>{if(event.key==='Escape'&&modal.classList.contains('show'))closeModal();});
     $('requirement').addEventListener('input',event=>{ $('charCount').textContent=event.target.value.length; if(event.target.value.trim()){ event.target.classList.remove('error'); $('requirementError').hidden=true; } });
@@ -216,7 +221,7 @@
       if(!$('requirement').value.trim()){ $('requirement').classList.add('error'); $('requirementError').hidden=false; $('requirement').focus(); showToast('请填写补充说明'); return; }
       const bidInfo=BidContext.read($('launchBidContext'));if(!bidInfo)return;if(!attachments.length){$('attachmentError').hidden=false;$('attachmentInput').focus();showToast('请至少上传一个附件');return;}
       const button=$('confirmTask'); button.disabled=true; button.innerHTML='<i data-lucide="loader-circle" class="icon"></i><span>正在提交</span>'; icons();
-      setTimeout(()=>{BidContext.save({...bidInfo,id:Date.now(),companyCode:'2115',company:bidInfo.bidder,module:groups[current].form,modules:[groups[current].form],queryGroup:groups[current].name,query:groups[current].field+'：'+groups[current].value,supplementNote:$('requirement').value.trim(),attachments:attachments.map(file=>({name:file.name,size:file.size,type:file.type})),status:'待处理',initiator:'洪亮',startTime:new Date().toLocaleString('sv-SE',{timeZone:'Asia/Shanghai'}),reviewer:'赵倩',history:[['任务已发起','洪亮']]});submitted.add(current);$('taskNumber').textContent=`BCR-20260917-00${current+1}`;$('successBidContext').innerHTML=BidContext.html(bidInfo);$('successAttachmentCount').textContent=attachments.length?`${attachments.length} 个`:'未上传';$('formView').hidden=true;$('successView').hidden=false;button.disabled=false;button.innerHTML='<i data-lucide="send" class="icon"></i><span>确认提交</span>';syncResult();showToast('任务已提供给档案系统');},800);
+      setTimeout(()=>{BidContext.save({...bidInfo,id:Date.now(),companyCode:'2115',company:bidInfo.bidder,module:groups[current].form,modules:[groups[current].form],queryGroup:groups[current].name,query:activeMaterial===null?groups[current].field+'：'+groups[current].value:'人员：'+materials[activeMaterial],materialName:activeMaterial===null?'':materials[activeMaterial],supplementNote:$('requirement').value.trim(),attachments:attachments.map(file=>({name:file.name,size:file.size,type:file.type})),status:'待处理',initiator:'洪亮',startTime:new Date().toLocaleString('sv-SE',{timeZone:'Asia/Shanghai'}),reviewer:'赵倩',history:[['任务已发起','洪亮']]});submitted.add(submissionKey());if(activeMaterial!==null){const itemButton=document.querySelector('[data-material="'+activeMaterial+'"]');itemButton.textContent="已发起补充";itemButton.disabled=true;}$('taskNumber').textContent=`BCR-20260917-00${current+1}`;$('successBidContext').innerHTML=BidContext.html(bidInfo);$('successAttachmentCount').textContent=attachments.length?`${attachments.length} 个`:'未上传';$('formView').hidden=true;$('successView').hidden=false;button.disabled=false;button.innerHTML='<i data-lucide="send" class="icon"></i><span>确认提交</span>';syncResult();showToast('任务已提供给档案系统');},800);
     });
     $('viewTask').addEventListener('click',()=>{location.href='智能写标补充材料任务原型.html?submitted=1';});
     $('searchNow').addEventListener('click',()=>showToast('已按当前查询条件完成检索'));
