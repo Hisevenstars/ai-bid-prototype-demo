@@ -209,9 +209,9 @@
     const frame = document.getElementById('prototypeFrame');
     const toggleButton = document.getElementById('toggleSidebar');
     const prototypes = {
-      launch: { title: '发起补充材料任务', src: '查询组提交补充材料任务原型.html?v=20261020-9' },
-      'archive-task': { title: '补充档案工作台', src: '补充档案任务原型.html?list=1&v=20261020-8' },
-      'bid-task': { title: '投标任务与执行进度', src: '智能写标补充材料任务原型.html?v=20261020-8' },
+      launch: { title: '发起补充材料任务', src: '查询组提交补充材料任务原型.html?v=20261020-10' },
+      'archive-task': { title: '补充档案工作台', src: '补充档案任务原型.html?list=1&v=20261020-10' },
+      'bid-task': { title: '投标任务与执行进度', src: '智能写标补充材料任务原型.html?v=20261020-10' },
       'material-status': { title: '检索页材料状态', src: 'AI写标详情材料状态原型.html' },
       reviewer: { title: '审核人配置', src: '公司人员配置原型.html' },
       owner: { title: '档案负责人配置', src: '档案负责人配置原型.html' }
@@ -225,7 +225,7 @@
       const navItem = navItems.find(item => item.dataset.id === id) || navItems[0];
       const selected = prototypes[navItem.dataset.id];
       navItems.forEach(item => item.classList.toggle('active', item === navItem));
-      if (frame.dataset.id !== navItem.dataset.id) {
+      if (frame.dataset.id !== navItem.dataset.id || frame.getAttribute('src') !== selected.src) {
         frame.dataset.id = navItem.dataset.id;
         frame.src = selected.src;
         frame.title = selected.title;
