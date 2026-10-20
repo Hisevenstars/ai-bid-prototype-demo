@@ -398,7 +398,26 @@
       .attachment-item { align-items: flex-start; flex-direction: column; }
     }
   </style>
-<style>.bid-context{margin:16px 0 22px;padding:16px 18px;background:#f8faff;border:1px solid #e3eaf5;border-radius:6px}.bid-context-title{font-size:13px;font-weight:650;color:#4b6080;margin-bottom:14px}.bid-context-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 24px}.bid-context-field{min-width:0}.bid-context-field.project{grid-column:span 2}.bid-context-field label{display:block;color:#8591a4;font-size:12px;font-weight:400;margin-bottom:5px}.bid-context-value{font-size:13px;line-height:1.6;font-weight:550;overflow-wrap:anywhere;color:#273449}.bid-context-value.deadline{color:#d46b08}.bid-deadline{width:100%;height:34px;padding:4px 8px;border:1px solid #cbd5e5;border-radius:4px;font:inherit;background:white}.bid-context-error{color:#ff4d4f;font-size:12px;margin-top:6px}.task-business-cell{min-width:170px;max-width:240px;white-space:normal;line-height:1.5}.task-business-time{min-width:150px;white-space:nowrap;font-variant-numeric:tabular-nums}@media(max-width:700px){.bid-context-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}</style><script src="bid-context.js?v=20261020-2"></script></head>
+<style>.bid-context{margin:16px 0 22px;padding:16px 18px;background:#f8faff;border:1px solid #e3eaf5;border-radius:6px}.bid-context-title{font-size:13px;font-weight:650;color:#4b6080;margin-bottom:14px}.bid-context-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px 24px}.bid-context-field{min-width:0}.bid-context-field.project{grid-column:span 2}.bid-context-field label{display:block;color:#8591a4;font-size:12px;font-weight:400;margin-bottom:5px}.bid-context-value{font-size:13px;line-height:1.6;font-weight:550;overflow-wrap:anywhere;color:#273449}.bid-context-value.deadline{color:#d46b08}.bid-deadline{width:100%;height:34px;padding:4px 8px;border:1px solid #cbd5e5;border-radius:4px;font:inherit;background:white}.bid-context-error{color:#ff4d4f;font-size:12px;margin-top:6px}.task-business-cell{min-width:170px;max-width:240px;white-space:normal;line-height:1.5}.task-business-time{min-width:150px;white-space:nowrap;font-variant-numeric:tabular-nums}@media(max-width:700px){.bid-context-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}</style><script src="bid-context.js?v=20261020-2"></script><style>
+/* 任务查询页项目信息采用四列对齐 */
+#queryBidContext .bid-context{background:#fff;border-color:#e7ebf1;padding:18px 22px;margin:0 0 16px;border-radius:7px}
+#queryBidContext .bid-context-title{color:#344054;font-size:14px;margin-bottom:16px;padding-left:10px;border-left:3px solid #1677ff;line-height:16px}
+#queryBidContext .bid-context-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:0}
+#queryBidContext .bid-context-field.project{grid-column:auto}
+#queryBidContext .bid-context-field{padding:0 22px;border-left:1px solid #edf0f5}
+#queryBidContext .bid-context-field:first-child{padding-left:0;border-left:0}
+#queryBidContext .bid-context-field:last-child{padding-right:0}
+#queryBidContext .bid-context-field label{margin-bottom:8px;color:#8590a1}
+#queryBidContext .bid-context-value{font-size:13px;line-height:22px;font-weight:500}
+@media(max-width:950px){#queryBidContext .bid-context-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 0}#queryBidContext .bid-context-field:nth-child(3){padding-left:0;border-left:0}}
+</style><style>
+.bid-context{background:#fff;border-color:#e7ebf1;border-radius:7px;padding:18px 20px}
+.bid-context-title{color:#344054;font-size:14px;margin-bottom:16px;padding-left:10px;border-left:3px solid #1677ff;line-height:16px}
+.bid-context-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 32px}
+.bid-context-field.project{grid-column:auto}
+.bid-context-field label{color:#8590a1;margin-bottom:6px}
+.bid-context-value{font-weight:500;line-height:22px}
+</style></head>
 <body>
   <header class="global-header">
     <div class="header-leading">
