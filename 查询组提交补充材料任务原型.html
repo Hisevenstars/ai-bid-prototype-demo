@@ -107,7 +107,7 @@
         <div class="result-tools">
           <div class="result-count">当前组检索结果已加载<span id="resultCount">0</span>条</div>
           <div class="toolset">
-            <button class="task-btn" id="openTask" type="button"><i data-lucide="clipboard-plus" class="icon"></i><span>发起补充档案和材料</span></button>
+            <button class="task-btn" id="openTask" type="button"><i data-lucide="clipboard-plus" class="icon"></i><span>发起补充档案</span></button>
             <button class="select-all" id="selectAll" type="button" disabled>全选</button>
             <button class="view-btn active" type="button"><i data-lucide="layout-grid" class="icon"></i>卡片</button>
             <button class="view-btn" type="button"><i data-lucide="list" class="icon"></i>列表</button>
@@ -196,13 +196,13 @@
       $('emptyState').style.display=group.count===0?'block':'none'; $('loadedList').style.display=group.count===0?'none':'block';
       document.querySelectorAll('.tab').forEach((tab,index)=>tab.classList.toggle('active',index===current));
       const isSubmitted=submitted.has('group:'+current); $('openTask').classList.toggle('submitted',isSubmitted);
-      $('openTask').innerHTML=isSubmitted?'<i data-lucide="circle-check" class="icon"></i><span>任务已提交</span>':'<i data-lucide="clipboard-plus" class="icon"></i><span>发起补充档案和材料</span>'; icons();
+      $('openTask').innerHTML=isSubmitted?'<i data-lucide="circle-check" class="icon"></i><span>任务已提交</span>':'<i data-lucide="clipboard-plus" class="icon"></i><span>发起补充档案</span>'; icons();
     }
     function openModal(materialIndex=null){
       activeMaterial=materialIndex;
       $('launchBidContext').innerHTML=BidContext.html({},true); $('attachmentError').hidden=true;
       if(submitted.has(submissionKey())){ showToast(`当前查询组已有待处理任务：BCR-20260917-00${current+1}`); return; }
-      $('modalTitle').textContent=activeMaterial===null?'发起补充档案和材料':'发起补充材料';$('taskContextName').textContent=activeMaterial===null?'花名册1':materials[activeMaterial]+' · 人员花名册';
+      $('modalTitle').textContent=activeMaterial===null?'发起补充档案':'发起补充材料';$('taskContextName').textContent=activeMaterial===null?'花名册1':materials[activeMaterial]+' · 人员花名册';
       const group=groups[current]; $('modalGroup').textContent=group.name; $('modalForm').textContent=group.form; $('modalLogic').textContent=group.logic; $('modalField').textContent=group.field; $('modalValue').textContent=group.value; if(activeMaterial!==null){$('modalField').textContent='人员';$('modalValue').textContent=materials[activeMaterial];}
       $('requirement').value=''; $('requirement').classList.remove('error'); $('requirementError').hidden=true; $('charCount').textContent='0'; attachments=[]; $('attachmentInput').value=''; renderAttachments(); $('formView').hidden=false; $('successView').hidden=true; modal.classList.add('show'); $('requirement').focus();
     }
