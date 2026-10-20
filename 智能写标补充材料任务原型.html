@@ -402,7 +402,7 @@
 /* 任务查询页项目信息采用四列对齐 */
 #queryBidContext .bid-context{background:#fff;border-color:#e7ebf1;padding:18px 22px;margin:0 0 16px;border-radius:7px}
 #queryBidContext .bid-context-title{color:#344054;font-size:14px;margin-bottom:16px;padding-left:10px;border-left:3px solid #1677ff;line-height:16px}
-#queryBidContext .bid-context-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:0}
+#queryBidContext .bid-context-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:0}
 #queryBidContext .bid-context-field.project{grid-column:auto}
 #queryBidContext .bid-context-field{padding:0 22px;border-left:1px solid #edf0f5}
 #queryBidContext .bid-context-field:first-child{padding-left:0;border-left:0}
@@ -805,6 +805,7 @@
       if (!task) return;
       const summary = getSummary(task.details);
       document.getElementById('queryBidContext').innerHTML=BidContext.html({...task,projectName:task.projectName||task.name});
+      document.querySelectorAll('#queryBidContext .bid-context-field').forEach(field=>{if(['项目名称','任务截止时间'].includes(field.querySelector('label').textContent.trim()))field.remove();});
       document.getElementById('detailTaskNumber').textContent = task.number;
       document.getElementById('detailProjectName').textContent = task.name;
       document.getElementById('detailBidder').textContent = task.bidder;
