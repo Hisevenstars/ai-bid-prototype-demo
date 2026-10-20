@@ -135,7 +135,7 @@
             <div class="context-cell"><span class="label">投标主体</span><strong>永辉彩食鲜供应链管理有限公司</strong></div>
             <div class="context-cell"><span class="label">当前查询组</span><strong id="modalGroup">查询组1</strong></div>
           </div>
-          <div id="launchBidContext"></div><div class="section-title">查询条件</div>
+          <div id="launchBidContext"></div><section id="materialDirectoryInfo" hidden style="margin:0 0 22px"><div class="section-title">材料标题</div><div class="condition-preview" id="materialDirectoryTitle" style="padding:14px 16px;line-height:1.7"></div></section><div class="section-title">查询条件</div>
           <div class="condition-preview">
             <div class="preview-meta">
               <div><span class="label">档案类型</span><strong id="modalForm">人员花名册</strong></div>
@@ -176,6 +176,7 @@
     let attachments = [];
     let activeMaterial = null;
     const materials=['王强','刘洋','陈华'];
+    const materialDirectoryTitles=['人员配置 / 人员花名册','人员配置 / 人员花名册','人员配置 / 人员花名册'];
     const submissionKey=()=>activeMaterial===null?'group:'+current:'material:'+current+':'+activeMaterial;
     const submitted = new Set();
     const $ = id => document.getElementById(id);
@@ -200,6 +201,8 @@
     }
     function openModal(materialIndex=null){
       activeMaterial=materialIndex;
+      $('materialDirectoryInfo').hidden=activeMaterial===null;
+      $('materialDirectoryTitle').textContent=activeMaterial===null?'':materialDirectoryTitles[activeMaterial];
       $('launchBidContext').innerHTML=BidContext.html({},true); $('attachmentError').hidden=true;
       if(submitted.has(submissionKey())){ showToast(`当前查询组已有待处理任务：BCR-20260917-00${current+1}`); return; }
       $('modalTitle').textContent=activeMaterial===null?'发起补充档案':'发起补充材料';$('taskContextName').textContent=activeMaterial===null?'花名册1':materials[activeMaterial]+' · 人员花名册';
@@ -221,7 +224,7 @@
       if(!$('requirement').value.trim()){ $('requirement').classList.add('error'); $('requirementError').hidden=false; $('requirement').focus(); showToast('请填写补充说明'); return; }
       const bidInfo=BidContext.read($('launchBidContext'));if(!bidInfo)return;if(!attachments.length){$('attachmentError').hidden=false;$('attachmentInput').focus();showToast('请至少上传一个附件');return;}
       const button=$('confirmTask'); button.disabled=true; button.innerHTML='<i data-lucide="loader-circle" class="icon"></i><span>正在提交</span>'; icons();
-      setTimeout(()=>{BidContext.save({...bidInfo,id:Date.now(),companyCode:'2115',company:bidInfo.bidder,module:groups[current].form,modules:[groups[current].form],queryGroup:groups[current].name,query:activeMaterial===null?groups[current].field+'：'+groups[current].value:'人员：'+materials[activeMaterial],materialName:activeMaterial===null?'':materials[activeMaterial],supplementNote:$('requirement').value.trim(),attachments:attachments.map(file=>({name:file.name,size:file.size,type:file.type})),status:'待处理',initiator:'洪亮',startTime:new Date().toLocaleString('sv-SE',{timeZone:'Asia/Shanghai'}),reviewer:'赵倩',history:[['任务已发起','洪亮']]});submitted.add(submissionKey());if(activeMaterial!==null){const itemButton=document.querySelector('[data-material="'+activeMaterial+'"]');itemButton.textContent="已发起补充";itemButton.disabled=true;}$('taskNumber').textContent=`BCR-20260917-00${current+1}`;$('successBidContext').innerHTML=BidContext.html(bidInfo);$('successAttachmentCount').textContent=attachments.length?`${attachments.length} 个`:'未上传';$('formView').hidden=true;$('successView').hidden=false;button.disabled=false;button.innerHTML='<i data-lucide="send" class="icon"></i><span>确认提交</span>';syncResult();showToast('任务已提供给档案系统');},800);
+      setTimeout(()=>{BidContext.save({...bidInfo,id:Date.now(),companyCode:'2115',company:bidInfo.bidder,module:groups[current].form,modules:[groups[current].form],queryGroup:groups[current].name,query:activeMaterial===null?groups[current].field+'：'+groups[current].value:'人员：'+materials[activeMaterial],materialName:activeMaterial===null?'':materials[activeMaterial],directoryTitle:activeMaterial===null?'':materialDirectoryTitles[activeMaterial],supplementNote:$('requirement').value.trim(),attachments:attachments.map(file=>({name:file.name,size:file.size,type:file.type})),status:'待处理',initiator:'洪亮',startTime:new Date().toLocaleString('sv-SE',{timeZone:'Asia/Shanghai'}),reviewer:'赵倩',history:[['任务已发起','洪亮']]});submitted.add(submissionKey());if(activeMaterial!==null){const itemButton=document.querySelector('[data-material="'+activeMaterial+'"]');itemButton.textContent="已发起补充";itemButton.disabled=true;}$('taskNumber').textContent=`BCR-20260917-00${current+1}`;$('successBidContext').innerHTML=BidContext.html(bidInfo);$('successAttachmentCount').textContent=attachments.length?`${attachments.length} 个`:'未上传';$('formView').hidden=true;$('successView').hidden=false;button.disabled=false;button.innerHTML='<i data-lucide="send" class="icon"></i><span>确认提交</span>';syncResult();showToast('任务已提供给档案系统');},800);
     });
     $('viewTask').addEventListener('click',()=>{location.href='智能写标补充材料任务原型.html?submitted=1';});
     $('searchNow').addEventListener('click',()=>showToast('已按当前查询条件完成检索'));
